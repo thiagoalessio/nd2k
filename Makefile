@@ -16,7 +16,7 @@ test:
 	pytest tests/
 
 coverage:
-	pytest --cov=nd2k --cov=tests --cov-branch tests/
+	pytest --cov=nd2k --cov=tests --cov-branch --cov-report=xml tests/
 
 type-checker:
 	mypy nd2k --strict

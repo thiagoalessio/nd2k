@@ -14,3 +14,8 @@ jobs:
     - run: make type-checker
     - run: make complexity-metrics
     - run: make security-scan
+
+    - name: Upload coverage reports to Codecov
+      uses: codecov/codecov-action@v5
+      with:
+        token: ${{ secrets.CODECOV_TOKEN }}
