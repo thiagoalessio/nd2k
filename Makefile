@@ -16,7 +16,9 @@ test:
 	pytest tests/
 
 coverage:
-	pytest --cov=nd2k --cov=tests --cov-branch --cov-report=xml tests/
+	pytest --cov=nd2k --cov=tests --cov-branch \
+		--junitxml=junit.xml -o junit_family=legacy \
+		--cov-report=xml tests/
 
 type-checker:
 	mypy nd2k --strict
