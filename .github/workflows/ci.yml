@@ -1,0 +1,16 @@
+name: CI
+
+on:
+  - pull_request
+  - push
+
+jobs:
+  checks:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+    - run: make deps
+    - run: make coverage
+    - run: make type-checker
+    - run: make complexity-metrics
+    - run: make security-scan

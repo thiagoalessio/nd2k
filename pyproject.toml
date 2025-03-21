@@ -1,0 +1,21 @@
+[build-system]
+requires = ["flit_core >=3.2,<4"]
+build-backend = "flit_core.buildapi"
+
+[project]
+name = "nd2k"
+authors = [{name = "thiagoalessio", email = "thiagoalessio@me.com"}]
+dynamic = ["version", "description"]
+
+[project.urls]
+Home = "https://github.com/thiagoalessio/nd2k"
+
+[project.scripts]
+nd2k = "nd2k.main:entrypoint"
+
+[tool.mypy]
+strict = true
+
+[tool.bandit]
+exclude_dirs = ['.venv']
+skips = ["B101"]
