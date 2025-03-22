@@ -3,8 +3,9 @@ import os
 import csv
 
 from typing import cast
-from .queries import *
-from .utils import *
+from . import queries as q
+from . import utils
+from .types import Operation, Trade
 
 
 def entrypoint() -> None:
@@ -26,12 +27,12 @@ def convert(input_filename: str) -> None:
 
 	trades, non_trades = organize(lines)
 
-	output = output_filename(input_filename, "koinly_trades")
+	output = utils.output_filename(input_filename, "koinly_trades")
 	with open(output, "w", encoding="utf-8", newline="\n") as file:
 		writer = csv.writer(file)
 		writer.writerows(format_trades(trades))
 
-	output = output_filename(input_filename, "koinly_non_trades")
+	output = utils.output_filename(input_filename, "koinly_non_trades")
 	with open(output, "w", encoding="utf-8", newline="\n") as file:
 		writer = csv.writer(file)
 		writer.writerows(format_non_trades(non_trades))
@@ -43,18 +44,18 @@ def organize(lines: list[list[str]]) -> tuple[ list[Trade], list[Operation] ]:
 	partial_trades: list[Trade] = []
 
 	for line in reversed(lines[1:]):
-		op = create_operation(line)
+		op = utils.create_operation(line)
 
-		if not is_successful(op):
+		if not q.is_successful(op):
 			continue
 
-		if not is_part_of_a_trade(op):
+		if not q.is_part_of_a_trade(op):
 			non_trades.append(op)
 			continue
 
 		tr = create_or_update_trade(op, partial_trades)
 
-		if is_completed(tr):
+		if q.is_completed(tr):
 			trades.append(tr)
 			partial_trades.remove(tr)
 
@@ -68,19 +69,19 @@ def organize(lines: list[list[str]]) -> tuple[ list[Trade], list[Operation] ]:
 
 def create_or_update_trade(op: Operation, partial_trades: list[Trade]) -> Trade:
 	for tr in partial_trades:
-		if fits_as_base_asset(op, tr):
+		if q.fits_as_base_asset(op, tr):
 			tr.operations.base_asset = op
 			return tr
 
-		if fits_as_quote_asset(op, tr):
+		if q.fits_as_quote_asset(op, tr):
 			tr.operations.quote_asset = op
 			return tr
 
-		if fits_as_trading_fee(op, tr):
+		if q.fits_as_trading_fee(op, tr):
 			tr.operations.trading_fee = op
 			return tr
 
-	tr = create_trade(op)
+	tr = utils.create_trade(op)
 	partial_trades.append(tr)
 	return tr
 
@@ -97,8 +98,8 @@ def format_trades(trades: list[Trade]) -> list[list[str]]:
 		trading_fee = cast(Operation, tr.operations.trading_fee)
 
 		lines.append([
-			format_date(base_asset.date),         # Koinly Date
-			format_trading_pair(tr.trading_pair), # Pair
+			utils.format_date(base_asset.date),         # Koinly Date
+			utils.format_trading_pair(tr.trading_pair), # Pair
 			base_asset.type.name,                 # Side
 			f"{base_asset.amount}",               # Amount
 			f"{quote_asset.amount}",              # Total
@@ -115,7 +116,7 @@ def format_non_trades(non_trades: list[Operation]) -> list[list[str]]:
 	lines.append(["Koinly Date", "Amount", "Currency", "Label", "TxHash"])
 	for op in non_trades:
 		lines.append([
-			format_date(op.date), # Koinly Date
+			utils.format_date(op.date), # Koinly Date
 			f"{op.amount}",       # Amount
 			op.symbol,            # Currency
 			op.type.name,         # Label -> HAS MEANING, CHECK DOCS

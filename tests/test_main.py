@@ -2,16 +2,25 @@ import os
 import filecmp
 import pytest
 
+from datetime import datetime
+from decimal import Decimal
 from unittest.mock import Mock
-from tests.helpers import *
-from nd2k.main import *
+from nd2k import main
+from nd2k.types import (
+	Operation,
+	OperationType,
+	Trade,
+	TradeOperations,
+	TradingPair,
+)
+from .helpers import create_test_operation, create_test_trade, normalize_file
 
 
 def test_entrypoint_no_input_file(capsys, monkeypatch) -> None:
 	monkeypatch.setattr("sys.argv", ["nd2k"])
 
 	with pytest.raises(SystemExit) as exc_info:
-		entrypoint()
+		main.entrypoint()
 
 	assert exc_info.value.code == 1
 	assert "Usage: nd2k <novadax-csv>" in capsys.readouterr().out
@@ -21,7 +30,7 @@ def test_entrypoint_input_file_does_not_exist(capsys, monkeypatch) -> None:
 	monkeypatch.setattr("sys.argv", ["nd2k", "invalid-file.csv"])
 
 	with pytest.raises(SystemExit) as exc_info:
-		entrypoint()
+		main.entrypoint()
 
 	assert exc_info.value.code == 1
 	assert "Error: No such file: invalid-file.csv" in capsys.readouterr().out
@@ -36,14 +45,14 @@ def test_entrypoint_valid_input(monkeypatch) -> None:
 	monkeypatch.setattr("nd2k.main.convert", mock_convert)
 	monkeypatch.setattr("sys.argv", ["nd2k", input_file])
 
-	entrypoint()
+	main.entrypoint()
 	mock_convert.assert_called_once_with(input_file)
 	os.remove(input_file)
 
 
 def test_convert() -> None:
 	input_file = "tests/sample_data/novadax.csv"
-	convert(input_file)
+	main.convert(input_file)
 
 	actual   = "tests/sample_data/novadax_koinly_trades.csv"
 	expected = "tests/sample_data/koinly_trades.csv"
@@ -172,14 +181,14 @@ def test_organize() -> None:
 		status  = "Sucesso",
 	)
 
-	trades, non_trades = organize(input_for_organize_tests)
+	trades, non_trades = main.organize(input_for_organize_tests)
 	assert trades == [trade3, trade2, trade1]
 	assert non_trades == [withdraw, deposit]
 
 
 def test_organize_incomplete_trades() -> None:
 	with pytest.raises(ValueError) as e:
-		organize(input_for_organize_tests[0:4])
+		main.organize(input_for_organize_tests[0:4])
 	assert str(e.value) == "Input has incomplete trades"
 
 
@@ -190,7 +199,7 @@ def test_create_or_update_trade_no_partial_trades() -> None:
 		symbol  = "FOO",
 	)
 	partial_trades = []
-	tr = create_or_update_trade(op, partial_trades)
+	tr = main.create_or_update_trade(op, partial_trades)
 	assert tr.operations.base_asset == op
 	assert [tr] == partial_trades
 
@@ -204,7 +213,7 @@ def test_create_or_update_trade_no_matches() -> None:
 
 	partial_trades = [tr1]
 
-	tr2 = create_or_update_trade(op, partial_trades)
+	tr2 = main.create_or_update_trade(op, partial_trades)
 	assert tr2.operations.base_asset == op
 	assert partial_trades == [tr1, tr2]
 
@@ -216,7 +225,7 @@ def test_create_or_update_trade_fits_as_base() -> None:
 	quote = create_test_operation(symbol="FOO", type=OperationType.BUY)
 	tr1.operations.quote_asset = quote
 
-	tr2 = create_or_update_trade(op, [tr1])
+	tr2 = main.create_or_update_trade(op, [tr1])
 	assert tr1 == tr2
 	assert tr2.operations.base_asset == op
 
@@ -228,7 +237,7 @@ def test_create_or_update_trade_fits_as_quote() -> None:
 	base = create_test_operation(symbol="FOO", type=OperationType.BUY)
 	tr1.operations.base_asset = base
 
-	tr2 = create_or_update_trade(op, [tr1])
+	tr2 = main.create_or_update_trade(op, [tr1])
 	assert tr1 == tr2
 	assert tr2.operations.quote_asset == op
 
@@ -240,7 +249,7 @@ def test_create_or_update_trade_fits_as_fee() -> None:
 	base = create_test_operation(symbol="FOO", type=OperationType.BUY)
 	tr1.operations.base_asset = base
 
-	tr2 = create_or_update_trade(op, [tr1])
+	tr2 = main.create_or_update_trade(op, [tr1])
 	assert tr1 == tr2
 	assert tr2.operations.trading_fee == op
 
@@ -308,7 +317,7 @@ def test_format_trades() -> None:
 		trading_pair = TradingPair(base="ABC", quote="USD"),
 	)
 
-	assert format_trades([trade1, trade2]) == expected_format_trade_result
+	assert main.format_trades([trade1, trade2]) == expected_format_trade_result
 
 
 def test_format_non_trades() -> None:
@@ -329,7 +338,7 @@ def test_format_non_trades() -> None:
 		status = "Sucesso",
 	)
 
-	assert format_non_trades([deposit, withdraw]) == expected_format_non_trades_result
+	assert main.format_non_trades([deposit, withdraw]) == expected_format_non_trades_result
 
 
 input_for_organize_tests = [

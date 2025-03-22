@@ -1,47 +1,48 @@
 import pytest
 
-from tests.helpers import *
-from nd2k.queries import *
+from nd2k import queries
+from nd2k.types import OperationType, TradingPair
+from .helpers import create_test_operation, create_test_trade
 
 
 def test_is_successful_true() -> None:
 	data = create_test_operation(status="Sucesso")
-	assert is_successful(data)
+	assert queries.is_successful(data)
 
 
 def test_is_successful_false() -> None:
 	data = create_test_operation(status="Anything Else")
-	assert not is_successful(data)
+	assert not queries.is_successful(data)
 
 
 def test_is_part_of_a_trade_buy() -> None:
 	data = create_test_operation(type=OperationType.BUY)
-	assert is_part_of_a_trade(data)
+	assert queries.is_part_of_a_trade(data)
 
 
 def test_is_part_of_a_trade_sell() -> None:
 	data = create_test_operation(type=OperationType.SELL)
-	assert is_part_of_a_trade(data)
+	assert queries.is_part_of_a_trade(data)
 
 
 def test_is_part_of_a_trade_trading_fee() -> None:
 	data = create_test_operation(type=OperationType.TRADING_FEE)
-	assert is_part_of_a_trade(data)
+	assert queries.is_part_of_a_trade(data)
 
 
 def test_is_part_of_a_trade_deposit() -> None:
 	data = create_test_operation(type=OperationType.DEPOSIT)
-	assert not is_part_of_a_trade(data)
+	assert not queries.is_part_of_a_trade(data)
 
 
 def test_is_part_of_a_trade_withdraw() -> None:
 	data = create_test_operation(type=OperationType.WITHDRAW)
-	assert not is_part_of_a_trade(data)
+	assert not queries.is_part_of_a_trade(data)
 
 
 def test_is_part_of_a_trade_withdraw_fee() -> None:
 	data = create_test_operation(type=OperationType.WITHDRAW_FEE)
-	assert not is_part_of_a_trade(data)
+	assert not queries.is_part_of_a_trade(data)
 
 
 def test_is_completed_complete() -> None:
@@ -49,46 +50,46 @@ def test_is_completed_complete() -> None:
 	tr.operations.base_asset  = create_test_operation()
 	tr.operations.quote_asset = create_test_operation()
 	tr.operations.trading_fee = create_test_operation()
-	assert is_completed(tr)
+	assert queries.is_completed(tr)
 
 
 def test_is_completed_no_trading_fee() -> None:
 	tr = create_test_trade()
 	tr.operations.base_asset  = create_test_operation()
 	tr.operations.quote_asset = create_test_operation()
-	assert not is_completed(tr)
+	assert not queries.is_completed(tr)
 
 
 def test_is_completed_no_quote_asset() -> None:
 	tr = create_test_trade()
 	tr.operations.base_asset  = create_test_operation()
 	tr.operations.trading_fee = create_test_operation()
-	assert not is_completed(tr)
+	assert not queries.is_completed(tr)
 
 
 def test_is_completed_no_base_asset() -> None:
 	tr = create_test_trade()
 	tr.operations.quote_asset = create_test_operation()
 	tr.operations.trading_fee = create_test_operation()
-	assert not is_completed(tr)
+	assert not queries.is_completed(tr)
 
 
 def test_is_completed_only_base_asset() -> None:
 	tr = create_test_trade()
 	tr.operations.base_asset = create_test_operation()
-	assert not is_completed(tr)
+	assert not queries.is_completed(tr)
 
 
 def test_is_completed_only_quote_asset() -> None:
 	tr = create_test_trade()
 	tr.operations.quote_asset = create_test_operation()
-	assert not is_completed(tr)
+	assert not queries.is_completed(tr)
 
 
 def test_is_completed_only_trading_fee() -> None:
 	tr = create_test_trade()
 	tr.operations.trading_fee = create_test_operation()
-	assert not is_completed(tr)
+	assert not queries.is_completed(tr)
 
 
 def test_fits_as_base_asset_true() -> None:
@@ -101,7 +102,7 @@ def test_fits_as_base_asset_true() -> None:
 	tr.operations.trading_fee = fee
 
 	op = create_test_operation(summary="BUY(FOO/BAR)", symbol="FOO")
-	assert fits_as_base_asset(op, tr)
+	assert queries.fits_as_base_asset(op, tr)
 
 
 def test_fits_as_base_asset_already_has_base() -> None:
@@ -112,7 +113,7 @@ def test_fits_as_base_asset_already_has_base() -> None:
 	tr.operations.base_asset = base
 
 	op = create_test_operation(summary="BUY(FOO/BAR)", symbol="FOO")
-	assert not fits_as_base_asset(op, tr)
+	assert not queries.fits_as_base_asset(op, tr)
 
 
 def test_fits_as_base_asset_wrong_summary() -> None:
@@ -125,7 +126,7 @@ def test_fits_as_base_asset_wrong_summary() -> None:
 	tr.operations.trading_fee = fee
 
 	op = create_test_operation(summary="SELL(FOO/BAR)", symbol="FOO")
-	assert not fits_as_base_asset(op, tr)
+	assert not queries.fits_as_base_asset(op, tr)
 
 
 def test_fits_as_base_asset_wrong_symbol() -> None:
@@ -138,7 +139,7 @@ def test_fits_as_base_asset_wrong_symbol() -> None:
 	tr.operations.trading_fee = fee
 
 	op = create_test_operation(summary="BUY(FOO/BAR)", symbol="BAR")
-	assert not fits_as_base_asset(op, tr)
+	assert not queries.fits_as_base_asset(op, tr)
 
 
 def test_fits_as_quote_asset_true() -> None:
@@ -151,7 +152,7 @@ def test_fits_as_quote_asset_true() -> None:
 	tr.operations.trading_fee = fee
 
 	op = create_test_operation(summary="BUY(FOO/BAR)", symbol="BAR")
-	assert fits_as_quote_asset(op, tr)
+	assert queries.fits_as_quote_asset(op, tr)
 
 
 def test_fits_as_quote_asset_already_has_quote() -> None:
@@ -162,7 +163,7 @@ def test_fits_as_quote_asset_already_has_quote() -> None:
 	tr.operations.quote_asset = quote
 
 	op = create_test_operation(summary="BUY(FOO/BAR)", symbol="BAR")
-	assert not fits_as_quote_asset(op, tr)
+	assert not queries.fits_as_quote_asset(op, tr)
 
 
 def test_fits_as_quote_asset_wrong_summary() -> None:
@@ -175,7 +176,7 @@ def test_fits_as_quote_asset_wrong_summary() -> None:
 	tr.operations.trading_fee = fee
 
 	op = create_test_operation(summary="SELL(FOO/BAR)", symbol="BAR")
-	assert not fits_as_quote_asset(op, tr)
+	assert not queries.fits_as_quote_asset(op, tr)
 
 
 def test_fits_as_quote_asset_wrong_symbol() -> None:
@@ -188,20 +189,20 @@ def test_fits_as_quote_asset_wrong_symbol() -> None:
 	tr.operations.trading_fee = fee
 
 	op = create_test_operation(summary="BUY(FOO/BAR)", symbol="FOO")
-	assert not fits_as_quote_asset(op, tr)
+	assert not queries.fits_as_quote_asset(op, tr)
 
 
 def test_fits_as_trading_fee_already_has_fee() -> None:
 	tr = create_test_trade()
 	tr.operations.trading_fee = create_test_operation()
 	op = create_test_operation(type=OperationType.TRADING_FEE)
-	assert not fits_as_trading_fee(op, tr)
+	assert not queries.fits_as_trading_fee(op, tr)
 
 
 def test_fits_as_trading_fee_sell_wrong_type() -> None:
 	tr = create_test_trade()
 	op = create_test_operation(type=OperationType.WITHDRAW_FEE)
-	assert not fits_as_trading_fee(op, tr)
+	assert not queries.fits_as_trading_fee(op, tr)
 
 
 def test_fits_as_trading_fee_buy() -> None:
@@ -214,7 +215,7 @@ def test_fits_as_trading_fee_buy() -> None:
 	tr.operations.quote_asset = quote
 
 	op = create_test_operation(symbol="FOO", type=OperationType.TRADING_FEE)
-	assert fits_as_trading_fee(op, tr)
+	assert queries.fits_as_trading_fee(op, tr)
 
 
 def test_fits_as_trading_fee_buy_wrong_symbol() -> None:
@@ -227,7 +228,7 @@ def test_fits_as_trading_fee_buy_wrong_symbol() -> None:
 	tr.operations.quote_asset = quote
 
 	op = create_test_operation(symbol="BAR", type=OperationType.TRADING_FEE)
-	assert not fits_as_trading_fee(op, tr)
+	assert not queries.fits_as_trading_fee(op, tr)
 
 
 def test_fits_as_trading_fee_sell() -> None:
@@ -240,7 +241,7 @@ def test_fits_as_trading_fee_sell() -> None:
 	tr.operations.quote_asset = quote
 
 	op = create_test_operation(symbol="BAR", type=OperationType.TRADING_FEE)
-	assert fits_as_trading_fee(op, tr)
+	assert queries.fits_as_trading_fee(op, tr)
 
 
 def test_fits_as_trading_fee_sell_wrong_symbol() -> None:
@@ -253,7 +254,7 @@ def test_fits_as_trading_fee_sell_wrong_symbol() -> None:
 	tr.operations.quote_asset = quote
 
 	op = create_test_operation(symbol="FOO", type=OperationType.TRADING_FEE)
-	assert not fits_as_trading_fee(op, tr)
+	assert not queries.fits_as_trading_fee(op, tr)
 
 
 def test_fits_as_trading_fee_empty_trade() -> None:
@@ -261,7 +262,7 @@ def test_fits_as_trading_fee_empty_trade() -> None:
 	op = create_test_operation(type=OperationType.TRADING_FEE)
 
 	with pytest.raises(ValueError) as e:
-		fits_as_trading_fee(op, tr)
+		queries.fits_as_trading_fee(op, tr)
 
 	assert str(e.value) == "Empty Trade"
 
@@ -274,6 +275,6 @@ def test_fits_as_trading_fee_malformed_trade() -> None:
 	op = create_test_operation(type=OperationType.TRADING_FEE)
 
 	with pytest.raises(ValueError) as e:
-		fits_as_trading_fee(op, tr)
+		queries.fits_as_trading_fee(op, tr)
 
 	assert str(e.value) == "Malformed Trade"

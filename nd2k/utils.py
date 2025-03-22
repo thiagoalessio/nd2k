@@ -2,9 +2,14 @@ import re
 
 from datetime import datetime
 from decimal import Decimal
-from typing import cast
-from .types import *
-from .queries import fits_as_base_asset, fits_as_quote_asset
+from . import queries as q
+from nd2k.types import (
+	Operation,
+	OperationType,
+	Trade,
+	TradeOperations,
+	TradingPair,
+)
 
 
 def output_filename(input_filename: str, suffix: str) -> str:
@@ -67,6 +72,6 @@ def create_trade(op: Operation) -> Trade:
 		operations   = TradeOperations(),
 		trading_pair = parse_trading_pair(op.summary))
 
-	tr.operations.base_asset  = op if fits_as_base_asset(op, tr)  else None
-	tr.operations.quote_asset = op if fits_as_quote_asset(op, tr) else None
+	tr.operations.base_asset  = op if q.fits_as_base_asset(op, tr)  else None
+	tr.operations.quote_asset = op if q.fits_as_quote_asset(op, tr) else None
 	return tr
