@@ -8,4 +8,4 @@
 __pycache__/
 build/
 dist/
-reports/
+htmlcov/

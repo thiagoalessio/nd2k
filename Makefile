@@ -1,4 +1,4 @@
-all: test coverage lint complexity security
+all: test coverage type-checker complexity-metrics security-scan
 
 clean:
 	rm -rf build dist nd2k.egg-info
@@ -16,9 +16,10 @@ test:
 	pytest tests/
 
 coverage:
-	pytest --cov=nd2k --cov=tests --cov-branch \
-		--junitxml=junit.xml -o junit_family=legacy \
-		--cov-report=xml tests/
+	pytest --cov=nd2k --cov=tests --cov-branch --cov-report=xml tests/
+
+coverage-html:
+	pytest --cov=nd2k --cov=tests --cov-report=html tests/
 
 type-checker:
 	mypy nd2k --strict
@@ -29,17 +30,3 @@ complexity-metrics:
 
 security-scan:
 	bandit -c pyproject.toml -r .
-
-all-html: coverage-html lint-html security-html
-
-coverage-html:
-	mkdir -p reports
-	pytest --cov=nd2k --cov=tests --cov-report=html:reports/pytest-cov tests/
-
-lint-html:
-	mkdir -p reports/mypy
-	mypy nd2k --strict --html-report reports/mypy
-
-security-html:
-	mkdir -p reports
-	bandit -c pyproject.toml -f html -r . > reports/bandit.html
