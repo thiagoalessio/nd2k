@@ -2,8 +2,14 @@ import re
 
 from datetime import datetime
 from decimal import Decimal
-from typing import cast
-from .types import *
+from . import queries as q
+from nd2k.types import (
+	Operation,
+	OperationType,
+	Trade,
+	TradeOperations,
+	TradingPair,
+)
 
 
 def output_filename(input_filename: str, suffix: str) -> str:
@@ -49,57 +55,6 @@ def parse_amount(data: str) -> Decimal:
 	return Decimal(f"{int_part}.{last_part}")
 
 
-def is_successful(op: Operation) -> bool:
-	return op.status == "Sucesso"
-
-
-def is_part_of_a_trade(op: Operation) -> bool:
-	return op.type.name in ["BUY", "SELL", "TRADING_FEE"]
-
-
-def is_completed(tr: Trade) -> bool:
-	return all([
-		tr.operations.base_asset,
-		tr.operations.quote_asset,
-		tr.operations.trading_fee])
-
-
-def fits_as_base_asset(op: Operation, tr: Trade) -> bool:
-	return (
-		not tr.operations.base_asset
-		and op.summary == tr.summary
-		and op.symbol  == tr.trading_pair.base)
-
-
-def fits_as_quote_asset(op: Operation, tr: Trade) -> bool:
-	return (
-		not tr.operations.quote_asset
-		and op.summary == tr.summary
-		and op.symbol  == tr.trading_pair.quote)
-
-
-def fits_as_trading_fee(op: Operation, tr: Trade) -> bool:
-	if tr.operations.trading_fee:
-		return False
-
-	if op.type.name != "TRADING_FEE":
-		return False
-
-	if not tr.operations.base_asset and not tr.operations.quote_asset:
-		raise ValueError("Empty Trade")
-
-	any_asset = tr.operations.base_asset or tr.operations.quote_asset
-	any_asset = cast(Operation, any_asset)
-
-	if any_asset.type.name == "BUY":
-		return op.symbol == tr.trading_pair.base
-
-	if any_asset.type.name == "SELL":
-		return op.symbol == tr.trading_pair.quote
-
-	raise ValueError("Malformed Trade")
-
-
 def create_operation(csv_line: list[str]) -> Operation:
 	return Operation(
 		date    = parse_date(csv_line[0]),
@@ -117,6 +72,6 @@ def create_trade(op: Operation) -> Trade:
 		operations   = TradeOperations(),
 		trading_pair = parse_trading_pair(op.summary))
 
-	tr.operations.base_asset  = op if fits_as_base_asset(op, tr)  else None
-	tr.operations.quote_asset = op if fits_as_quote_asset(op, tr) else None
+	tr.operations.base_asset  = op if q.fits_as_base_asset(op, tr)  else None
+	tr.operations.quote_asset = op if q.fits_as_quote_asset(op, tr) else None
 	return tr

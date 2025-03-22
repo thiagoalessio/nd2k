@@ -1,7 +1,13 @@
 from typing import Any
 from datetime import datetime
 from decimal import Decimal
-from nd2k.types import *
+from nd2k.types import (
+	Operation,
+	OperationType,
+	Trade,
+	TradeOperations,
+	TradingPair,
+)
 
 
 def create_test_operation(**kwargs: Any) -> Operation:
