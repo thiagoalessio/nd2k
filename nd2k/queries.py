@@ -35,7 +35,7 @@ def fits_as_trading_fee(op: Operation, tr: Trade) -> bool:
 	if tr.operations.trading_fee:
 		return False
 
-	if op.type.name != "TRADING_FEE":
+	if not is_trading_fee(op):
 		return False
 
 	if not tr.operations.base_asset and not tr.operations.quote_asset:
@@ -51,3 +51,7 @@ def fits_as_trading_fee(op: Operation, tr: Trade) -> bool:
 		return op.symbol == tr.trading_pair.quote
 
 	raise ValueError("Malformed Trade")
+
+
+def is_trading_fee(op: Operation) -> bool:
+	return op.type.name == "TRADING_FEE"
