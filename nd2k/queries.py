@@ -1,5 +1,5 @@
 from typing import cast
-from .types import Operation, Trade
+from .types import Operation, Trade, TradeOperations
 
 
 def is_successful(op: Operation) -> bool:
@@ -38,11 +38,7 @@ def fits_as_trading_fee(op: Operation, tr: Trade) -> bool:
 	if not is_trading_fee(op):
 		return False
 
-	if not tr.operations.base_asset and not tr.operations.quote_asset:
-		raise ValueError("Empty Trade")
-
-	any_asset = tr.operations.base_asset or tr.operations.quote_asset
-	any_asset = cast(Operation, any_asset)
+	any_asset = get_any_asset(tr.operations)
 
 	if any_asset.type.name == "BUY":
 		return op.symbol == tr.trading_pair.base
@@ -55,3 +51,10 @@ def fits_as_trading_fee(op: Operation, tr: Trade) -> bool:
 
 def is_trading_fee(op: Operation) -> bool:
 	return op.type.name == "TRADING_FEE"
+
+
+def get_any_asset(ops: TradeOperations) -> Operation:
+	any_asset = ops.base_asset or ops.quote_asset
+	if any_asset:
+		return any_asset
+	raise ValueError("Empty Trade")
