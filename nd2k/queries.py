@@ -1,4 +1,3 @@
-from typing import cast
 from .types import Operation, Trade, TradeOperations
 
 
