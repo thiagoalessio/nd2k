@@ -38,12 +38,10 @@ def fits_as_trading_fee(op: Operation, tr: Trade) -> bool:
 	if not is_trading_fee(op):
 		return False
 
-	any_asset = get_any_asset(tr.operations)
-
 	if is_a_purchase(tr):
 		return op.symbol == tr.trading_pair.base
 
-	if any_asset.type.name == "SELL":
+	if is_a_sale(tr):
 		return op.symbol == tr.trading_pair.quote
 
 	raise ValueError("Malformed Trade")
@@ -56,6 +54,11 @@ def is_trading_fee(op: Operation) -> bool:
 def is_a_purchase(tr: Trade) -> bool:
 	any_asset = get_any_asset(tr.operations)
 	return any_asset.type.name == "BUY"
+
+
+def is_a_sale(tr: Trade) -> bool:
+	any_asset = get_any_asset(tr.operations)
+	return any_asset.type.name == "SELL"
 
 
 def get_any_asset(ops: TradeOperations) -> Operation:
