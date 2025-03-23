@@ -15,7 +15,7 @@ from .helpers import create_test_operation
 
 def test_output_filename() -> None:
 	data     = "myfile.csv", "koinly_trades"
-	actual   = utils.output_filename("myfile.csv", "koinly_trades")
+	actual   = utils.output_filename(*data)
 	expected = "myfile_koinly_trades.csv"
 	assert actual == expected
 
