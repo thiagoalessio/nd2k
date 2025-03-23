@@ -12,6 +12,9 @@ build: clean
 build-container:
 	podman build -t nd2k .
 
+publish-to-pypi:
+	flit publish
+
 install:
 	flit install
 

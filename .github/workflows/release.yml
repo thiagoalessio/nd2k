@@ -64,3 +64,21 @@ jobs:
         tags: |
           ghcr.io/${{ github.repository }}:latest
           ghcr.io/${{ github.repository }}:${{ github.ref_name }}
+
+  publish-to-pypi:
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Download artifacts
+      uses: actions/download-artifact@v4
+      with:
+        name: dist
+        path: dist/
+
+    - run: make deps
+    - run: make publish-to-pypi
+      env:
+        FLIT_USERNAME: __token__
+        FLIT_PASSWORD: ${{ secrets.PYPI_TOKEN }}
