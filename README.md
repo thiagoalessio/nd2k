@@ -1,6 +1,6 @@
 # nd2k
 
-Converts NovaDAX CSVs reports to formats accepted by Koinly.
+Converts NovaDAX CSV reports to formats accepted by Koinly.
 
 [![CI][ci_badge]][ci_project_url]
 [![Codacy Badge][codacy_badge]][codacy_project_url]
