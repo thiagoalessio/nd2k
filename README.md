@@ -13,12 +13,12 @@ Converts NovaDAX CSV reports to formats accepted by Koinly.
 
 ## Installation and Usage
 
-	pip3 install nd2k==0.1
+	pip3 install nd2k
 	nd2k novadax-file.csv
 
 Alternatively, you can use a container image:
 
-	[docker|podman] run -v $(pwd):/wdir -w /wdir ghcr.io/thiagoalessio/nd2k:v0.1 ./novadax.csv
+	[docker|podman] run -v $(pwd):/wdir -w /wdir ghcr.io/thiagoalessio/nd2k ./novadax.csv
 
 ## Key concepts
 
