@@ -9,6 +9,9 @@ deps:
 build: clean
 	python -m build
 
+build-container:
+	podman build -t nd2k .
+
 install:
 	flit install
 
