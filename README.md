@@ -15,7 +15,7 @@ Converts NovaDAX CSV reports to formats accepted by Koinly.
 	pip3 install https://github.com/thiagoalessio/nd2k/releases/download/v0.1/nd2k-0.1.tar.gz
 	nd2k novadax-file.csv
 
-## Alternatively, you can use a container image:
+Alternatively, you can use a container image:
 
 	<docker|podman> run -v $(pwd):/wdir -w /wdir ghcr.io/thiagoalessio/nd2k:v0.1 ./novadax.csv
 
@@ -27,6 +27,7 @@ Converts NovaDAX CSV reports to formats accepted by Koinly.
 * Each line in the Koinly CSV is a **Transaction**.
 
 Transactions can consist of one or more operations:
+
 * A "simple" transaction, such as deposits and withdraws have only one operation.
 * A "trade" transaction has three operations (base asset, quote asset, and trading fee).
 
@@ -36,6 +37,7 @@ two Koinly CSVs (one for trades and another for all non-trades).
 ### Base and Quote assets
 
 In a trading pair like BTC/EUR:
+
 * **Base asset (BTC):** The asset being bought or sold.
 * **Quote asset (EUR):** The asset used to price the base asset.
 
@@ -49,7 +51,6 @@ based on the fee's currency and the trade type (purchase or sale).
 
 * For purchases, the fee is charged in the base asset currency.
 * For sales, the fee is charged in the quote asset currency.
-
 
 ---
 [ci_badge]: https://github.com/thiagoalessio/nd2k/actions/workflows/ci.yml/badge.svg?event=push&branch=main

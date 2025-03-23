@@ -3,6 +3,7 @@
 .DS_Store
 .coverage
 .mypy_cache
+.nova
 .tool-versions
 .venv/
 __pycache__/
