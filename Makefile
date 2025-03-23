@@ -19,14 +19,14 @@ coverage:
 	pytest --cov=nd2k --cov=tests --cov-branch --cov-report=xml tests/
 
 coverage-html:
-	pytest --cov=nd2k --cov=tests --cov-report=html tests/
+	pytest --cov=nd2k --cov=tests --cov-branch --cov-report=html tests/
 
 type-checker:
-	mypy nd2k --strict
+	mypy nd2k tests --strict
 
 complexity-metrics:
-	radon cc nd2k --show-complexity --total-average
-	radon mi nd2k --show
+	radon cc nd2k tests --show-complexity --total-average
+	radon mi nd2k tests --show
 
 security-scan:
 	bandit -c pyproject.toml -r .

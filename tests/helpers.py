@@ -33,7 +33,7 @@ def create_test_trade(**kwargs: Any) -> Trade:
 
 # Normalize files before comparison:
 # This ensures consistent line endings and encoding.
-def normalize_file(file_path):
+def normalize_file(file_path: str) -> None:
 	with open(file_path, "r", encoding="utf-8") as f:
 		content = f.read()
 

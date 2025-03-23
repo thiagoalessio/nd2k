@@ -4,6 +4,7 @@ import pytest
 
 from datetime import datetime
 from decimal import Decimal
+from typing import Any
 from unittest.mock import Mock
 from nd2k import main
 from nd2k.types import (
@@ -16,7 +17,7 @@ from nd2k.types import (
 from .helpers import create_test_operation, create_test_trade, normalize_file
 
 
-def test_entrypoint_no_input_file(capsys, monkeypatch) -> None:
+def test_entrypoint_no_input_file(capsys: Any, monkeypatch: Any) -> None:
 	monkeypatch.setattr("sys.argv", ["nd2k"])
 
 	with pytest.raises(SystemExit) as exc_info:
@@ -26,7 +27,7 @@ def test_entrypoint_no_input_file(capsys, monkeypatch) -> None:
 	assert "Usage: nd2k <novadax-csv>" in capsys.readouterr().out
 
 
-def test_entrypoint_input_file_does_not_exist(capsys, monkeypatch) -> None:
+def test_entrypoint_input_file_does_not_exist(capsys: Any, monkeypatch: Any) -> None:
 	monkeypatch.setattr("sys.argv", ["nd2k", "invalid-file.csv"])
 
 	with pytest.raises(SystemExit) as exc_info:
@@ -36,7 +37,7 @@ def test_entrypoint_input_file_does_not_exist(capsys, monkeypatch) -> None:
 	assert "Error: No such file: invalid-file.csv" in capsys.readouterr().out
 
 
-def test_entrypoint_valid_input(monkeypatch) -> None:
+def test_entrypoint_valid_input(monkeypatch: Any) -> None:
 	input_file = "myfile.csv"
 	with open(input_file, "w"):
 		pass
@@ -198,7 +199,7 @@ def test_create_or_update_trade_no_partial_trades() -> None:
 		summary = "Test(FOO/BAR)",
 		symbol  = "FOO",
 	)
-	partial_trades = []
+	partial_trades: list[Trade] = []
 	tr = main.create_or_update_trade(op, partial_trades)
 	assert tr.operations.base_asset == op
 	assert [tr] == partial_trades
