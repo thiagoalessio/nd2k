@@ -3,8 +3,7 @@ import os
 import csv
 
 from typing import cast
-from . import queries as q
-from . import utils
+from . import utils, queries as q
 from .types import Operation, Trade
 
 
