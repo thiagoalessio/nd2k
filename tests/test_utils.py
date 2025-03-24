@@ -87,6 +87,38 @@ def test_parse_amount_invalid() -> None:
 	assert str(e.value) == f"No numeric values found in \"{data}\""
 
 
+def test_koinly_tag_crypto_deposit() -> None:
+	assert "deposit" == utils.koinly_tag(OperationType.CRYPTO_DEPOSIT)
+
+
+def test_koinly_tag_fiat_deposit() -> None:
+	assert "deposit" == utils.koinly_tag(OperationType.FIAT_DEPOSIT)
+
+
+def test_koinly_tag_crypto_withdraw() -> None:
+	assert "withdraw" == utils.koinly_tag(OperationType.CRYPTO_WITHDRAW)
+
+
+def test_koinly_tag_withdraw_fee() -> None:
+	assert "fee" == utils.koinly_tag(OperationType.WITHDRAW_FEE)
+
+
+def test_koinly_tag_redeemed_bonus() -> None:
+	assert "reward" == utils.koinly_tag(OperationType.REDEEMED_BONUS)
+
+
+def test_koinly_tag_buy() -> None:
+	assert "trade" == utils.koinly_tag(OperationType.BUY)
+
+
+def test_koinly_tag_sell() -> None:
+	assert "trade" == utils.koinly_tag(OperationType.SELL)
+
+
+def test_koinly_tag_trading_fee() -> None:
+	assert "fee" == utils.koinly_tag(OperationType.TRADING_FEE)
+
+
 def test_create_operation() -> None:
 	csv_line = [
 		"15/03/1970 23:45:56",

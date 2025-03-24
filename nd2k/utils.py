@@ -55,6 +55,19 @@ def parse_amount(data: str) -> Decimal:
 	return Decimal(f"{int_part}.{last_part}")
 
 
+def koinly_tag(op_type: OperationType) -> str:
+	return {
+		"CRYPTO_DEPOSIT":  "deposit",
+		"FIAT_DEPOSIT":    "deposit",
+		"CRYPTO_WITHDRAW": "withdraw",
+		"WITHDRAW_FEE":    "fee",
+		"REDEEMED_BONUS":  "reward",
+		"BUY":             "trade",
+		"SELL":            "trade",
+		"TRADING_FEE":     "fee",
+	}[op_type.name]
+
+
 def create_operation(csv_line: list[str]) -> Operation:
 	return Operation(
 		date    = parse_date(csv_line[0]),

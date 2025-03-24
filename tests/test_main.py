@@ -376,6 +376,6 @@ expected_format_trade_result = [
 
 expected_format_non_trades_result = [
 ["Koinly Date",         "Amount",            "Currency", "Label",   "TxHash"],
-["2024-10-27 00:14:54", "18490811.57243999", "ALITA",    "CRYPTO_DEPOSIT", ""],
-["2025-03-20 16:19:01", "1.5446",            "DCR",      "CRYPTO_WITHDRAW",""]
+["2024-10-27 00:14:54", "18490811.57243999", "ALITA",    "deposit", ""],
+["2025-03-20 16:19:01", "1.5446",            "DCR",      "withdraw",""]
 ]
