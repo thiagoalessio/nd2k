@@ -120,7 +120,7 @@ def format_non_trades(non_trades: list[NonTrade]) -> list[list[str]]:
 			utils.format_date(op.date), # Koinly Date
 			f"{op.amount}",       # Amount
 			op.symbol,            # Currency
-			op.type.name,         # Label -> HAS MEANING, CHECK DOCS
+			utils.koinly_tag(op.type), # Tag
 			"",                   # TxHash
 		])
 	return lines
