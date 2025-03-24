@@ -24,6 +24,15 @@ class Operation:
 	status:  str
 
 
+class Transaction:
+	pass
+
+
+@dataclass
+class NonTrade(Transaction): # a.k.a. "Simple Transaction"
+	operation: Operation
+
+
 class TradingPair(NamedTuple):
 	base:  str
 	quote: str
@@ -37,7 +46,7 @@ class TradeOperations:
 
 
 @dataclass
-class Trade:
+class Trade(Transaction):
 	summary:      str
 	operations:   TradeOperations
 	trading_pair: TradingPair

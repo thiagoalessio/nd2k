@@ -4,7 +4,7 @@ import csv
 
 from typing import cast
 from . import utils, queries as q
-from .types import Operation, Trade
+from .types import Operation, Trade, NonTrade
 
 
 def entrypoint() -> None:
@@ -37,7 +37,7 @@ def convert(input_filename: str) -> None:
 		writer.writerows(format_non_trades(non_trades))
 
 
-def organize(lines: list[list[str]]) -> tuple[ list[Trade], list[Operation] ]:
+def organize(lines: list[list[str]]) -> tuple[ list[Trade], list[NonTrade] ]:
 	trades = []
 	non_trades = []
 	partial_trades: list[Trade] = []
@@ -49,7 +49,7 @@ def organize(lines: list[list[str]]) -> tuple[ list[Trade], list[Operation] ]:
 			continue
 
 		if not q.is_part_of_a_trade(op):
-			non_trades.append(op)
+			non_trades.append(NonTrade(operation=op))
 			continue
 
 		tr = create_or_update_trade(op, partial_trades)
@@ -110,10 +110,12 @@ def format_trades(trades: list[Trade]) -> list[list[str]]:
 	return lines
 
 
-def format_non_trades(non_trades: list[Operation]) -> list[list[str]]:
+def format_non_trades(non_trades: list[NonTrade]) -> list[list[str]]:
 	lines = []
 	lines.append(["Koinly Date", "Amount", "Currency", "Label", "TxHash"])
-	for op in non_trades:
+	for nt in non_trades:
+		op = nt.operation
+
 		lines.append([
 			utils.format_date(op.date), # Koinly Date
 			f"{op.amount}",       # Amount

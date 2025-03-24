@@ -10,6 +10,7 @@ from nd2k import main
 from nd2k.types import (
 	Operation,
 	OperationType,
+	NonTrade,
 	Trade,
 	TradeOperations,
 	TradingPair,
@@ -164,23 +165,23 @@ def test_organize() -> None:
 		trading_pair = TradingPair(base="ABC", quote="USD"),
 	)
 
-	deposit = Operation(
+	deposit = NonTrade(operation=Operation(
 		date    = datetime(2024, 10, 7, 21, 0, 57),
 		type    = OperationType.DEPOSIT,
 		summary = "Depósito de criptomoedas",
 		symbol  = "SUNWUKONG",
 		amount  = Decimal("33848.30"),
 		status  = "Sucesso",
-	)
+	))
 
-	withdraw = Operation(
+	withdraw = NonTrade(operation=Operation(
 		date    = datetime(2025, 3, 20, 16, 19, 1),
 		type    = OperationType.WITHDRAW,
 		summary = "Saque de criptomoedas",
 		symbol  = "DCR",
 		amount  = Decimal("1.5446"),
 		status  = "Sucesso",
-	)
+	))
 
 	trades, non_trades = main.organize(input_for_organize_tests)
 	assert trades == [trade3, trade2, trade1]
@@ -322,22 +323,22 @@ def test_format_trades() -> None:
 
 
 def test_format_non_trades() -> None:
-	deposit = Operation(
+	deposit = NonTrade(operation=Operation(
 		date   = datetime(2024, 10, 27, 0, 14, 54),
 		summary= "Depósito de criptomoedas",
 		type   = OperationType.DEPOSIT,
 		symbol = "ALITA",
 		amount = Decimal("18490811.57243999"),
 		status = "Sucesso",
-	)
-	withdraw = Operation(
+	))
+	withdraw = NonTrade(operation=Operation(
 		date   = datetime(2025, 3, 20, 16, 19, 1),
 		type   = OperationType.WITHDRAW,
 		summary= "Saque de criptomoedas",
 		symbol = "DCR",
 		amount = Decimal("1.5446"),
 		status = "Sucesso",
-	)
+	))
 
 	assert main.format_non_trades([deposit, withdraw]) == expected_format_non_trades_result
 
