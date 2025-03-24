@@ -167,7 +167,7 @@ def test_organize() -> None:
 
 	deposit = NonTrade(operation=Operation(
 		date    = datetime(2024, 10, 7, 21, 0, 57),
-		type    = OperationType.DEPOSIT,
+		type    = OperationType.CRYPTO_DEPOSIT,
 		summary = "Depósito de criptomoedas",
 		symbol  = "SUNWUKONG",
 		amount  = Decimal("33848.30"),
@@ -176,7 +176,7 @@ def test_organize() -> None:
 
 	withdraw = NonTrade(operation=Operation(
 		date    = datetime(2025, 3, 20, 16, 19, 1),
-		type    = OperationType.WITHDRAW,
+		type    = OperationType.CRYPTO_WITHDRAW,
 		summary = "Saque de criptomoedas",
 		symbol  = "DCR",
 		amount  = Decimal("1.5446"),
@@ -326,14 +326,14 @@ def test_format_non_trades() -> None:
 	deposit = NonTrade(operation=Operation(
 		date   = datetime(2024, 10, 27, 0, 14, 54),
 		summary= "Depósito de criptomoedas",
-		type   = OperationType.DEPOSIT,
+		type   = OperationType.CRYPTO_DEPOSIT,
 		symbol = "ALITA",
 		amount = Decimal("18490811.57243999"),
 		status = "Sucesso",
 	))
 	withdraw = NonTrade(operation=Operation(
 		date   = datetime(2025, 3, 20, 16, 19, 1),
-		type   = OperationType.WITHDRAW,
+		type   = OperationType.CRYPTO_WITHDRAW,
 		summary= "Saque de criptomoedas",
 		symbol = "DCR",
 		amount = Decimal("1.5446"),
@@ -376,6 +376,6 @@ expected_format_trade_result = [
 
 expected_format_non_trades_result = [
 ["Koinly Date",         "Amount",            "Currency", "Label",   "TxHash"],
-["2024-10-27 00:14:54", "18490811.57243999", "ALITA",    "DEPOSIT", ""],
-["2025-03-20 16:19:01", "1.5446",            "DCR",      "WITHDRAW",""]
+["2024-10-27 00:14:54", "18490811.57243999", "ALITA",    "CRYPTO_DEPOSIT", ""],
+["2025-03-20 16:19:01", "1.5446",            "DCR",      "CRYPTO_WITHDRAW",""]
 ]

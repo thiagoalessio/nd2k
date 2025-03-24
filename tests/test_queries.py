@@ -31,12 +31,12 @@ def test_is_part_of_a_trade_trading_fee() -> None:
 
 
 def test_is_part_of_a_trade_deposit() -> None:
-	data = create_test_operation(type=OperationType.DEPOSIT)
+	data = create_test_operation(type=OperationType.CRYPTO_DEPOSIT)
 	assert not queries.is_part_of_a_trade(data)
 
 
 def test_is_part_of_a_trade_withdraw() -> None:
-	data = create_test_operation(type=OperationType.WITHDRAW)
+	data = create_test_operation(type=OperationType.CRYPTO_WITHDRAW)
 	assert not queries.is_part_of_a_trade(data)
 
 
@@ -268,7 +268,7 @@ def test_fits_as_trading_fee_empty_trade() -> None:
 
 
 def test_fits_as_trading_fee_malformed_trade() -> None:
-	wrong_op = create_test_operation(type=OperationType.DEPOSIT)
+	wrong_op = create_test_operation(type=OperationType.CRYPTO_DEPOSIT)
 	tr = create_test_trade()
 	tr.operations.base_asset = wrong_op
 
