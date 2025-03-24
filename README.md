@@ -2,7 +2,7 @@
 
 Converts NovaDAX CSV reports to formats accepted by Koinly.
 
-[![PyPI version][pypi_badge]][pypi]
+[![PyPI version][pypi_badge]][pypi_project_url]
 [![CI][ci_badge]][ci_project_url]
 [![Codacy Badge][codacy_badge]][codacy_project_url]
 [![Codacy Coverage Badge][codacy_coverage_badge]][codacy_project_url]
@@ -54,8 +54,8 @@ based on the fee's currency and the trade type (purchase or sale).
 * For sales, the fee is charged in the quote asset currency.
 
 ---
-[pypi_badge]: https://badge.fury.io/py/nd2k.svg
-[pypi]: https://pypi.org/project/nd2k/
+[pypi_badge]: https://badge.fury.io/py/nd2k.svg?icon=si%3Apython
+[pypi_project_url]: https://pypi.org/project/nd2k/
 [ci_badge]: https://github.com/thiagoalessio/nd2k/actions/workflows/ci.yml/badge.svg?event=push&branch=main
 [ci_project_url]: https://github.com/thiagoalessio/nd2k/actions/workflows/ci.yml
 [codacy_badge]: https://app.codacy.com/project/badge/Grade/e26d4581b014425fba78028573b15f98
