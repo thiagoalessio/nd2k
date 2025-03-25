@@ -1,4 +1,4 @@
-all: test coverage type-checker complexity-metrics security-scan
+all: test coverage lint type-checker complexity-metrics security-scan
 
 clean:
 	rm -rf build dist nd2k.egg-info
@@ -30,6 +30,9 @@ coverage-html:
 	pytest -vv -s --gherkin-terminal-reporter \
 		--cov=nd2k --cov=tests --cov-branch --cov-report=html \
 		tests/
+
+lint:
+	pyflakes nd2k tests
 
 type-checker:
 	mypy nd2k tests --strict

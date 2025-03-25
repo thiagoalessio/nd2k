@@ -3,6 +3,7 @@ build==1.2.2.post1
 flit==3.11.0
 lxml==5.3.1
 mypy==1.15.0
+pyflakes==3.2.0
 pytest-bdd==8.1.0
 pytest-cov==6.0.0
 pytest==8.3.5
