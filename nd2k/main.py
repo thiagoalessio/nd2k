@@ -7,37 +7,44 @@ from . import utils, queries as q
 from .types import Operation, Trade, NonTrade
 
 
+csv_type = list[list[str]]
+
+
 def entrypoint() -> None:
 	if len(sys.argv) != 2:
 		print("Usage: nd2k <novadax-csv>")
 		exit(1)
 
-	novadax_csv = sys.argv[1]
-	if not os.path.exists(novadax_csv):
-		print(f"Error: No such file: {novadax_csv}")
+	input_file = sys.argv[1]
+
+	if not os.path.exists(input_file):
+		print(f"Error: No such file: {input_file}")
 		exit(1)
 
-	convert(novadax_csv)
-
-
-def convert(input_filename: str) -> None:
-	with open(input_filename, "r") as file:
-		lines = list(csv.reader(file))
-
+	lines = read_input_file(input_file)
 	trades, non_trades = organize(lines)
 
-	output = utils.output_filename(input_filename, "koinly_trades")
-	with open(output, "w", encoding="utf-8", newline="\n") as file:
+	output_file = utils.output_filename(input_file, "koinly_trades")
+	formatted   = format_trades(trades)
+	write_output_file(output_file, formatted)
+
+	output_file = utils.output_filename(input_file, "koinly_non_trades")
+	formatted   = format_non_trades(non_trades)
+	write_output_file(output_file, formatted)
+
+
+def read_input_file(input_file: str) -> csv_type:
+	with open(input_file, "r") as file:
+		return list(csv.reader(file))
+
+
+def write_output_file(output_file: str, contents: csv_type) -> None:
+	with open(output_file, "w", encoding="utf-8", newline="\n") as file:
 		writer = csv.writer(file)
-		writer.writerows(format_trades(trades))
-
-	output = utils.output_filename(input_filename, "koinly_non_trades")
-	with open(output, "w", encoding="utf-8", newline="\n") as file:
-		writer = csv.writer(file)
-		writer.writerows(format_non_trades(non_trades))
+		writer.writerows(contents)
 
 
-def organize(lines: list[list[str]]) -> tuple[ list[Trade], list[NonTrade] ]:
+def organize(lines: csv_type) -> tuple[ list[Trade], list[NonTrade] ]:
 	trades = []
 	non_trades = []
 	partial_trades: list[Trade] = []
@@ -99,18 +106,18 @@ def format_trades(trades: list[Trade]) -> list[list[str]]:
 		lines.append([
 			utils.format_date(base_asset.date),         # Koinly Date
 			utils.format_trading_pair(tr.trading_pair), # Pair
-			base_asset.type.name,                 # Side
-			f"{base_asset.amount}",               # Amount
-			f"{quote_asset.amount}",              # Total
-			f"{trading_fee.amount}",              # Fee Amount
-			trading_fee.symbol,                   # Fee Currency
-			"",                                   # Order ID
-			"",                                   # Trade ID
+			base_asset.type.name,                       # Side
+			f"{base_asset.amount}",                     # Amount
+			f"{quote_asset.amount}",                    # Total
+			f"{trading_fee.amount}",                    # Fee Amount
+			trading_fee.symbol,                         # Fee Currency
+			"",                                         # Order ID
+			"",                                         # Trade ID
 		])
 	return lines
 
 
-def format_non_trades(non_trades: list[NonTrade]) -> list[list[str]]:
+def format_non_trades(non_trades: list[NonTrade]) -> csv_type:
 	lines = []
 	lines.append(["Koinly Date", "Amount", "Currency", "Label", "TxHash"])
 	for nt in non_trades:
@@ -118,9 +125,9 @@ def format_non_trades(non_trades: list[NonTrade]) -> list[list[str]]:
 
 		lines.append([
 			utils.format_date(op.date), # Koinly Date
-			f"{op.amount}",       # Amount
-			op.symbol,            # Currency
-			utils.koinly_tag(op.type), # Tag
-			"",                   # TxHash
+			f"{op.amount}",             # Amount
+			op.symbol,                  # Currency
+			utils.koinly_tag(op.type),  # Tag
+			"",                         # TxHash
 		])
 	return lines

@@ -19,13 +19,17 @@ install:
 	flit install
 
 test:
-	pytest tests/
+	pytest -vv -s --gherkin-terminal-reporter tests/
 
 coverage:
-	pytest --cov=nd2k --cov=tests --cov-branch --cov-report=xml tests/
+	pytest -vv -s --gherkin-terminal-reporter \
+		--cov=nd2k --cov=tests --cov-branch --cov-report=xml \
+		tests/
 
 coverage-html:
-	pytest --cov=nd2k --cov=tests --cov-branch --cov-report=html tests/
+	pytest -vv -s --gherkin-terminal-reporter \
+		--cov=nd2k --cov=tests --cov-branch --cov-report=html \
+		tests/
 
 type-checker:
 	mypy nd2k tests --strict
