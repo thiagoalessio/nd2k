@@ -4,6 +4,7 @@
 .coverage
 .mypy_cache
 .nova
+.pytest_cache
 .tool-versions
 .venv/
 __pycache__/
