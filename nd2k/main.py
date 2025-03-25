@@ -92,7 +92,7 @@ def create_or_update_trade(op: Operation, partial_trades: list[Trade]) -> Trade:
 	return tr
 
 
-def format_trades(trades: list[Trade]) -> list[list[str]]:
+def format_trades(trades: list[Trade]) -> csv_type:
 	lines = []
 	lines.append([
 		"Koinly Date", "Pair", "Side", "Amount", "Total",
