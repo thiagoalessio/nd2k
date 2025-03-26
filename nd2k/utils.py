@@ -61,6 +61,7 @@ def koinly_tag(op_type: OperationType) -> str:
 		"CRYPTO_DEPOSIT":  "deposit",
 		"FIAT_DEPOSIT":    "deposit",
 		"CRYPTO_WITHDRAW": "withdraw",
+		"FIAT_WITHDRAW":   "withdraw",
 		"WITHDRAW_FEE":    "fee",
 		"REDEEMED_BONUS":  "reward",
 		"BUY":             "trade",

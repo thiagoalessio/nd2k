@@ -9,6 +9,7 @@ class OperationType(Enum):
 	CRYPTO_DEPOSIT  = "Depósito de criptomoedas"
 	FIAT_DEPOSIT    = "Depósito em Reais"
 	CRYPTO_WITHDRAW = "Saque de criptomoedas"
+	FIAT_WITHDRAW   = "Saque em Reais"
 	WITHDRAW_FEE    = "Taxa de saque de criptomoedas"
 	REDEEMED_BONUS  = "Redeemed Bonus"
 	BUY             = "Compra"

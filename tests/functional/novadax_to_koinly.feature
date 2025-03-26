@@ -6,6 +6,7 @@ Feature: Convert NovaDAX CSV to Koinly-compatible transactions
 	Scenario: Convert NovaDAX operations to Koinly transactions
 		Given a NovaDAX CSV file has the following operations:
 			| date                | summary                       | symbol   | amount                              | status  |
+			| 19/11/2024 12:25:50 | Saque em Reais                | BRL      | R$ -8,900,00                        | Sucesso |
 			| 23/09/2024 20:13:47 | Redeemed Bonus                | BRL      | R$ +5,00                            | Sucesso |
 			| 28/09/2024 17:18:43 | Compra(MEMERUNE/BRL)          | MEMERUNE | +362,77 MEMERUNE(≈R$155.05)         | Sucesso |
 			| 28/09/2024 17:19:53 | Venda(MEMERUNE/BRL)           | BRL      | R$ +89,48                           | Sucesso |
@@ -33,6 +34,7 @@ Feature: Convert NovaDAX CSV to Koinly-compatible transactions
 
 		And a Koinly non_trades file should be created with the following transactions:
 			| date                |           amount | symbol   | tag      | txhash |
+			| 2024-11-19 12:25:50 |    8900.00       | BRL      | withdraw |        |
 			| 2024-09-23 20:13:47 |       5.00       | BRL      | reward   |        |
 			| 2024-10-27 12:29:24 | 1609546.768462   | PUNKAI   | deposit  |        |
 			| 2024-09-23 20:01:41 |   40000.00       | BRL      | deposit  |        |
