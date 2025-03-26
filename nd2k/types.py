@@ -6,14 +6,14 @@ from typing import NamedTuple, Optional
 
 
 class OperationType(Enum):
-	CRYPTO_DEPOSIT  = "Depósito de criptomoedas"
-	FIAT_DEPOSIT    = "Depósito em Reais"
+	CRYPTO_DEPOSIT  = "Depósito de criptomoedas"
+	FIAT_DEPOSIT    = "Depósito em Reais"
 	CRYPTO_WITHDRAW = "Saque de criptomoedas"
 	WITHDRAW_FEE    = "Taxa de saque de criptomoedas"
 	REDEEMED_BONUS  = "Redeemed Bonus"
 	BUY             = "Compra"
 	SELL            = "Venda"
-	TRADING_FEE     = "Taxa de transação"
+	TRADING_FEE     = "Taxa de transação"
 
 
 @dataclass

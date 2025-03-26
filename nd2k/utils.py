@@ -1,4 +1,5 @@
 import re
+import unicodedata
 
 from datetime import datetime
 from decimal import Decimal
@@ -69,10 +70,11 @@ def koinly_tag(op_type: OperationType) -> str:
 
 
 def create_operation(csv_line: list[str]) -> Operation:
+	summary = unicodedata.normalize('NFC', csv_line[1])
 	return Operation(
 		date    = parse_date(csv_line[0]),
-		type    = OperationType(csv_line[1].split("(")[0]),
-		summary = csv_line[1],
+		type    = OperationType(summary.split("(")[0]),
+		summary = summary,
 		symbol  = csv_line[2],
 		amount  = parse_amount(csv_line[3]),
 		status  = csv_line[4],
