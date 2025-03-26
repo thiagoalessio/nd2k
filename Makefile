@@ -1,4 +1,4 @@
-all: test coverage lint type-checker complexity-metrics security-scan
+all: test coverage-html lint type-checker complexity-metrics security-scan
 
 clean:
 	rm -rf build dist nd2k.egg-info

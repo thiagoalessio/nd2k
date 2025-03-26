@@ -8,6 +8,10 @@ Feature: Convert NovaDAX CSV to Koinly-compatible transactions
 			| date                | summary                       | symbol   | amount                              | status  |
 			| 19/11/2024 12:25:50 | Saque em Reais                | BRL      | R$ -8,900,00                        | Sucesso |
 			| 23/09/2024 20:13:47 | Redeemed Bonus                | BRL      | R$ +5,00                            | Sucesso |
+			| 23/09/2024 20:13:47 | Redeemed Bonus                | BRL      | R$ +5,00                            | Sucesso |
+			| 28/09/2024 17:18:43 | Taxa de transação             | MEMERUNE | -4,00 MEMERUNE(≈R$0.67)             | Sucesso |
+			| 28/09/2024 17:18:43 | Compra(MEMERUNE/BRL)          | BRL      | R$ -100,00                          | Sucesso |
+			| 28/09/2024 17:18:43 | Compra(MEMERUNE/BRL)          | MEMERUNE | +400,00 MEMERUNE(≈R$155.05)         | Sucesso |
 			| 28/09/2024 17:18:43 | Compra(MEMERUNE/BRL)          | MEMERUNE | +362,77 MEMERUNE(≈R$155.05)         | Sucesso |
 			| 28/09/2024 17:19:53 | Venda(MEMERUNE/BRL)           | BRL      | R$ +89,48                           | Sucesso |
 			| 27/10/2024 12:29:24 | Depósito de criptomoedas      | PUNKAI   | +1,609,546,768462 PUNKAI(≈R$160.95) | Sucesso |
@@ -29,9 +33,9 @@ Feature: Convert NovaDAX CSV to Koinly-compatible transactions
 		Then a Koinly universal file should be created with the following transactions:
 			| date                | sent_amount   | sent_cur | recv_amount    | recv_cur | fee_amount | fee_cur  | nwa | nwc | label    | desc | txh |
 			| 2024-09-23 20:01:41 |               |          |   40000.00     | BRL      |            |          |     |     | deposit  |      |     |
-			| 2024-09-23 20:13:47 |               |          |       5.00     | BRL      |            |          |     |     | reward   |      |     |
+			| 2024-09-23 20:13:47 |               |          |      10.00     | BRL      |            |          |     |     | reward   |      |     |
 			| 2024-09-28 07:08:35 |   51.01       | BRL      |  200787.00     | TIP      | 863.3841   | TIP      |     |     | trade    |      |     |
-			| 2024-09-28 17:18:43 |  155.04       | BRL      |     362.77     | MEMERUNE |   1.559911 | MEMERUNE |     |     | trade    |      |     |
+			| 2024-09-28 17:18:43 |  255.04       | BRL      |     762.77     | MEMERUNE |   5.559911 | MEMERUNE |     |     | trade    |      |     |
 			| 2024-09-28 17:19:53 |  205.19       | MEMERUNE |      89.48     | BRL      |   0.39     | BRL      |     |     | trade    |      |     |
 			| 2024-10-24 16:19:22 |    1.54256146 | DCR      |                |          |            |          |     |     | withdraw |      |     |
 			| 2024-10-24 16:19:23 |    0.01       | DCR      |                |          |            |          |     |     | fee      |      |     |
