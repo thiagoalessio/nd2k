@@ -19,24 +19,21 @@ Feature: Convert NovaDAX CSV to Koinly-compatible transactions
 			| 23/09/2024 20:01:41 | Depósito em Reais             | BRL      | R$ +50,000,00                       | Falha   |
 			| 23/09/2024 20:01:41 | Depósito em Reais             | BRL      | R$ +40,000,00                       | Sucesso |
 			| 28/09/2024 07:08:35 | Taxa de transação             | TIP      | -863,3841 TIP(≈R$0.22)              | Sucesso |
-			| 24/10/2024 16:19:22 | Taxa de saque de criptomoedas | DCR      | -0,01 DCR(≈R$0.69)                  | Sucesso |
+			| 24/10/2024 16:19:23 | Taxa de saque de criptomoedas | DCR      | -0,01 DCR(≈R$0.69)                  | Sucesso |
 			| 28/09/2024 07:08:35 | Compra(TIP/BRL)               | TIP      | +200,787,00 TIP(≈R$51.02)           | Sucesso |
 			| 24/10/2024 16:19:22 | Saque de criptomoedas         | DCR      | -1,54256146 DCR(≈R$106.55)          | Sucesso |
 			| 28/09/2024 07:08:35 | Compra(TIP/BRL)               | BRL      | R$ -51,01                           | Sucesso |
 
 		When the file is processed
 
-		Then a Koinly trades file should be created with the following transactions:
-			| date                | pair         | side |    amount |  total | fee_amount | fee_currency | orderid | tradeid |
-			| 2024-09-28 17:18:43 | MEMERUNE/BRL | BUY  |    362.77 | 155.04 |   1.559911 | MEMERUNE     |         |         |
-			| 2024-09-28 17:19:53 | MEMERUNE/BRL | SELL |    205.19 |  89.48 |   0.39     | BRL          |         |         |
-			| 2024-09-28 07:08:35 | TIP/BRL      | BUY  | 200787.00 |  51.01 | 863.3841   | TIP          |         |         |
-
-		And a Koinly non_trades file should be created with the following transactions:
-			| date                |           amount | symbol   | tag      | txhash |
-			| 2024-11-19 12:25:50 |    8900.00       | BRL      | withdraw |        |
-			| 2024-09-23 20:13:47 |       5.00       | BRL      | reward   |        |
-			| 2024-10-27 12:29:24 | 1609546.768462   | PUNKAI   | deposit  |        |
-			| 2024-09-23 20:01:41 |   40000.00       | BRL      | deposit  |        |
-			| 2024-10-24 16:19:22 |       0.01       | DCR      | fee      |        |
-			| 2024-10-24 16:19:22 |       1.54256146 | DCR      | withdraw |        |
+		Then a Koinly universal file should be created with the following transactions:
+			| date                | sent_amount   | sent_cur | recv_amount    | recv_cur | fee_amount | fee_cur  | nwa | nwc | label    | desc | txh |
+			| 2024-09-23 20:01:41 |               |          |   40000.00     | BRL      |            |          |     |     | deposit  |      |     |
+			| 2024-09-23 20:13:47 |               |          |       5.00     | BRL      |            |          |     |     | reward   |      |     |
+			| 2024-09-28 07:08:35 |   51.01       | BRL      |  200787.00     | TIP      | 863.3841   | TIP      |     |     | trade    |      |     |
+			| 2024-09-28 17:18:43 |  155.04       | BRL      |     362.77     | MEMERUNE |   1.559911 | MEMERUNE |     |     | trade    |      |     |
+			| 2024-09-28 17:19:53 |  205.19       | MEMERUNE |      89.48     | BRL      |   0.39     | BRL      |     |     | trade    |      |     |
+			| 2024-10-24 16:19:22 |    1.54256146 | DCR      |                |          |            |          |     |     | withdraw |      |     |
+			| 2024-10-24 16:19:23 |    0.01       | DCR      |                |          |            |          |     |     | fee      |      |     |
+			| 2024-10-27 12:29:24 |               |          | 1609546.768462 | PUNKAI   |            |          |     |     | deposit  |      |     |
+			| 2024-11-19 12:25:50 | 8900.00       | BRL      |                |          |            |          |     |     | withdraw |      |     |

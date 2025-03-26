@@ -34,7 +34,7 @@ Transactions can consist of one or more operations:
 * A "trade" transaction has three operations (base asset, quote asset, and trading fee).
 
 This script organizes NovaDAX CSV operations into transactions, and outputs
-two Koinly CSVs (one for trades and another for all non-trades).
+a CSV in the [Koinly Universal Format][].
 
 ### Base and Quote assets
 
@@ -64,3 +64,4 @@ based on the fee's currency and the trade type (purchase or sale).
 [codacy_badge]: https://app.codacy.com/project/badge/Grade/e26d4581b014425fba78028573b15f98
 [codacy_coverage_badge]: https://app.codacy.com/project/badge/Coverage/e26d4581b014425fba78028573b15f98
 [codacy_project_url]: https://app.codacy.com/gh/thiagoalessio/nd2k/dashboard
+[Koinly Universal Format]: https://support.koinly.io/en/articles/9489976-how-to-create-a-custom-csv-file-with-your-data#3-universal-format

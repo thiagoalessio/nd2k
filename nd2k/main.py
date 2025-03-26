@@ -4,7 +4,7 @@ import csv
 
 from typing import cast
 from . import utils, queries as q
-from .types import Operation, Trade, NonTrade
+from .types import Operation, OperationType, Trade, NonTrade, Transaction
 
 
 csv_type = list[list[str]]
@@ -22,14 +22,11 @@ def entrypoint() -> None:
 		exit(1)
 
 	lines = read_input_file(input_file)
-	trades, non_trades = organize(lines)
+	transactions = organize(lines)
+	transactions = sorted(transactions, key=lambda t: t.date)
 
-	output_file = utils.output_filename(input_file, "koinly_trades")
-	formatted   = format_trades(trades)
-	write_output_file(output_file, formatted)
-
-	output_file = utils.output_filename(input_file, "koinly_non_trades")
-	formatted   = format_non_trades(non_trades)
+	output_file = utils.output_filename(input_file, "koinly_universal")
+	formatted = universal_format(transactions)
 	write_output_file(output_file, formatted)
 
 
@@ -44,7 +41,7 @@ def write_output_file(output_file: str, contents: csv_type) -> None:
 		writer.writerows(contents)
 
 
-def organize(lines: csv_type) -> tuple[ list[Trade], list[NonTrade] ]:
+def organize(lines: csv_type) -> list[Transaction]:
 	trades = []
 	non_trades = []
 	partial_trades: list[Trade] = []
@@ -68,9 +65,7 @@ def organize(lines: csv_type) -> tuple[ list[Trade], list[NonTrade] ]:
 	if len(partial_trades):
 		raise ValueError("Input has incomplete trades")
 
-	return (
-		list(reversed(trades)),
-		list(reversed(non_trades)))
+	return cast(list[Transaction], trades + non_trades)
 
 
 def create_or_update_trade(op: Operation, partial_trades: list[Trade]) -> Trade:
@@ -92,42 +87,80 @@ def create_or_update_trade(op: Operation, partial_trades: list[Trade]) -> Trade:
 	return tr
 
 
-def format_trades(trades: list[Trade]) -> csv_type:
+def universal_format(transactions: list[Transaction]) -> csv_type:
 	lines = []
 	lines.append([
-		"Koinly Date", "Pair", "Side", "Amount", "Total",
-		"Fee Amount", "Fee Currency", "Order ID", "Trade ID",
+		"Date", "Sent Amount", "Sent Currency", "Received Amount",
+		"Received Currency", "Fee Amount", "Fee Currency", "Net Worth Amount",
+		"Net Worth Currency", "Label", "Description",
 	])
-	for tr in trades:
-		base_asset  = cast(Operation, tr.operations.base_asset)
-		quote_asset = cast(Operation, tr.operations.quote_asset)
-		trading_fee = cast(Operation, tr.operations.trading_fee)
 
-		lines.append([
-			utils.format_date(base_asset.date),         # Koinly Date
-			utils.format_trading_pair(tr.trading_pair), # Pair
-			base_asset.type.name,                       # Side
-			f"{base_asset.amount}",                     # Amount
-			f"{quote_asset.amount}",                    # Total
-			f"{trading_fee.amount}",                    # Fee Amount
-			trading_fee.symbol,                         # Fee Currency
-			"",                                         # Order ID
-			"",                                         # Trade ID
-		])
+	for t in transactions:
+		if isinstance(t, Trade):
+			lines.append(format_trade(t))
+		else:
+			lines.append(format_non_trade(cast(NonTrade, t)))
+
 	return lines
 
 
-def format_non_trades(non_trades: list[NonTrade]) -> csv_type:
-	lines = []
-	lines.append(["Koinly Date", "Amount", "Currency", "Label", "TxHash"])
-	for nt in non_trades:
-		op = nt.operation
+def format_trade(t: Trade) -> list[str]:
+	base_asset  = cast(Operation, t.operations.base_asset)
+	quote_asset = cast(Operation, t.operations.quote_asset)
+	trading_fee = cast(Operation, t.operations.trading_fee)
 
-		lines.append([
-			utils.format_date(op.date), # Koinly Date
-			f"{op.amount}",             # Amount
-			op.symbol,                  # Currency
-			utils.koinly_tag(op.type),  # Tag
-			"",                         # TxHash
-		])
-	return lines
+	if base_asset.type == OperationType.BUY:
+		sent_amount = quote_asset.amount
+		sent_symbol = quote_asset.symbol
+		recv_amount = base_asset.amount
+		recv_symbol = base_asset.symbol
+	else:
+		sent_amount = base_asset.amount
+		sent_symbol = base_asset.symbol
+		recv_amount = quote_asset.amount
+		recv_symbol = quote_asset.symbol
+
+	return [
+		utils.format_date(base_asset.date), # Date
+		f"{sent_amount}",                   # Sent Amount
+		f"{sent_symbol}",                   # Sent Currency
+		f"{recv_amount}",                   # Received Amount
+		f"{recv_symbol}",                   # Received Currency
+		f"{trading_fee.amount}",            # Fee Amount
+		f"{trading_fee.symbol}",            # Fee Currency
+		"",                                 # Net Worth Amount
+		"",                                 # Net Worth Currency
+		utils.koinly_tag(base_asset.type),  # Label
+		"",                                 # Description
+		"",                                 # TxHash
+	]
+
+
+def format_non_trade(t: NonTrade) -> list[str]:
+	op = t.operation
+
+	if op.type.name in ["CRYPTO_WITHDRAW", "FIAT_WITHDRAW", "WITHDRAW_FEE"]:
+		sent_amount = str(op.amount)
+		sent_symbol = str(op.symbol)
+		recv_amount = ""
+		recv_symbol = ""
+	else:
+		sent_amount = ""
+		sent_symbol = ""
+		recv_amount = str(op.amount)
+		recv_symbol = str(op.symbol)
+
+	return [
+		utils.format_date(op.date), # Date
+		sent_amount,                # Sent Amount
+		sent_symbol,                # Sent Currency
+		recv_amount,                # Received Amount
+		recv_symbol,                # Received Currency
+		"",                         # Fee Amount
+		"",                         # Fee Currency
+		"",                         # Net Worth Amount
+		"",                         # Net Worth Currency
+		utils.koinly_tag(op.type),  # Label
+		"",                         # Description
+		"",                         # TxHash
+	]
