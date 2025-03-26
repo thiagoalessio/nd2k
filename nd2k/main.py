@@ -2,7 +2,9 @@ import sys
 import os
 import csv
 
+from decimal import Decimal
 from typing import cast
+from collections import defaultdict
 from . import utils, queries as q
 from .types import Operation, OperationType, Trade, NonTrade, Transaction
 
@@ -21,24 +23,22 @@ def entrypoint() -> None:
 		print(f"Error: No such file: {input_file}")
 		exit(1)
 
-	lines = read_input_file(input_file)
-	transactions = organize(lines)
-	transactions = sorted(transactions, key=lambda t: t.date)
+	result = utils.pipe(
+		input_file,
+		read_input_file,
+		organize,
+		combine,
+		order_by_date,
+		universal_format,
+	)
 
 	output_file = utils.output_filename(input_file, "koinly_universal")
-	formatted = universal_format(transactions)
-	write_output_file(output_file, formatted)
+	write_output_file(output_file, result)
 
 
 def read_input_file(input_file: str) -> csv_type:
 	with open(input_file, "r", encoding="utf-8", errors="ignore") as file:
 		return list(csv.reader(file))
-
-
-def write_output_file(output_file: str, contents: csv_type) -> None:
-	with open(output_file, "w", encoding="utf-8", newline="\n") as file:
-		writer = csv.writer(file)
-		writer.writerows(contents)
 
 
 def organize(lines: csv_type) -> list[Transaction]:
@@ -85,6 +85,44 @@ def create_or_update_trade(op: Operation, partial_trades: list[Trade]) -> Trade:
 	tr = utils.create_trade(op)
 	partial_trades.append(tr)
 	return tr
+
+
+def combine(transactions: list[Transaction]) -> list[Transaction]:
+	groups = defaultdict(list)
+	for t in transactions:
+		idx = utils.combine_group_index(t)
+		groups[idx].append(t)
+
+	combined = []
+	for g in groups.values():
+		if q.is_trade(g[0]):
+			t = combine_trades(cast(list[Trade], g))
+		else:
+			t = combine_non_trades(cast(list[NonTrade], g))
+		combined.append(t)
+
+	return combined
+
+
+def combine_trades(lst: list[Trade]) -> Trade:
+	base  = cast(Operation, lst[0].operations.base_asset)
+	quote = cast(Operation, lst[0].operations.quote_asset)
+	fee   = cast(Operation, lst[0].operations.trading_fee)
+
+	base.amount  = Decimal(sum(cast(Operation, i.operations.base_asset).amount  for i in lst))
+	quote.amount = Decimal(sum(cast(Operation, i.operations.quote_asset).amount for i in lst))
+	fee.amount   = Decimal(sum(cast(Operation, i.operations.trading_fee).amount for i in lst))
+
+	trade = utils.create_trade(base)
+	trade.operations.quote_asset = quote
+	trade.operations.trading_fee = fee
+	return trade
+
+
+def combine_non_trades(lst: list[NonTrade]) -> NonTrade:
+	op = lst[0].operation
+	op.amount = Decimal(sum(i.operation.amount for i in lst))
+	return NonTrade(operation=op)
 
 
 def universal_format(transactions: list[Transaction]) -> csv_type:
@@ -164,3 +202,13 @@ def format_non_trade(t: NonTrade) -> list[str]:
 		"",                         # Description
 		"",                         # TxHash
 	]
+
+
+def order_by_date(lst: list[Transaction]) -> list[Transaction]:
+	return sorted(lst, key=lambda t: t.date)
+
+
+def write_output_file(output_file: str, contents: csv_type) -> None:
+	with open(output_file, "w", encoding="utf-8", newline="\n") as file:
+		writer = csv.writer(file)
+		writer.writerows(contents)

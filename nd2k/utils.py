@@ -3,6 +3,8 @@ import unicodedata
 
 from datetime import datetime
 from decimal import Decimal
+from functools import reduce
+from typing import Any, Callable, cast
 from . import queries as q
 from nd2k.types import (
 	Operation,
@@ -10,6 +12,8 @@ from nd2k.types import (
 	Trade,
 	TradeOperations,
 	TradingPair,
+	Transaction,
+	NonTrade,
 )
 
 
@@ -91,3 +95,16 @@ def create_trade(op: Operation) -> Trade:
 	tr.operations.base_asset  = op if q.fits_as_base_asset(op, tr)  else None
 	tr.operations.quote_asset = op if q.fits_as_quote_asset(op, tr) else None
 	return tr
+
+
+def pipe(data: Any, *funcs: Callable[..., Any]) -> Any:
+	return reduce(lambda x, f: f(x), funcs, data)
+
+
+def combine_group_index(t: Transaction) -> str:
+	idx = str(t.date)
+	if q.is_trade(t):
+		idx += cast(Trade, t).summary
+	else:
+		idx += cast(NonTrade, t).operation.summary
+	return idx
