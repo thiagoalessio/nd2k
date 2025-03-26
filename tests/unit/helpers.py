@@ -4,8 +4,7 @@ from decimal import Decimal
 from nd2k.types import (
 	Operation,
 	OperationType,
-	Trade,
-	TradeOperations,
+	PartialTrade,
 	TradingPair,
 )
 
@@ -22,10 +21,9 @@ def create_test_operation(**kwargs: Any) -> Operation:
 	return Operation(**{**defaults, **kwargs})
 
 
-def create_test_trade(**kwargs: Any) -> Trade:
+def create_test_trade(**kwargs: Any) -> PartialTrade:
 	defaults = {
 		"summary":      "Test",
-		"operations":   TradeOperations(),
 		"trading_pair": TradingPair(base="ABC", quote="XYZ"),
 	}
-	return Trade(**{**defaults, **kwargs})
+	return PartialTrade(**{**defaults, **kwargs})

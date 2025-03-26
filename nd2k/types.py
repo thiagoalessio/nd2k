@@ -1,9 +1,8 @@
-from abc import ABC, abstractmethod
-from enum import Enum
-from dataclasses import dataclass, field
+from dataclasses import dataclass
 from datetime import datetime
 from decimal import Decimal
-from typing import NamedTuple, Optional, cast
+from enum import Enum
+from typing import NamedTuple
 
 
 class OperationType(Enum):
@@ -28,15 +27,8 @@ class Operation:
 	status:  str
 
 
-class Transaction(ABC):
-	@property
-	@abstractmethod
-	def date(self) -> datetime:
-		pass
-
-
 @dataclass
-class NonTrade(Transaction): # a.k.a. "Simple Transaction"
+class NonTrade: # a.k.a. "Simple Transaction"
 	operation: Operation
 
 	@property
@@ -50,18 +42,28 @@ class TradingPair(NamedTuple):
 
 
 @dataclass
-class TradeOperations:
-	base_asset:  Optional[Operation|None] = field(default_factory=lambda:None)
-	quote_asset: Optional[Operation|None] = field(default_factory=lambda:None)
-	trading_fee: Optional[Operation|None] = field(default_factory=lambda:None)
-
-
-@dataclass
-class Trade(Transaction):
+class Trade:
 	summary:      str
-	operations:   TradeOperations
 	trading_pair: TradingPair
+	base_asset:   Operation
+	quote_asset:  Operation
+	trading_fee:  Operation
 
 	@property
 	def date(self) -> datetime:
-		return cast(Operation, self.operations.base_asset).date
+		return self.base_asset.date
+
+
+Transaction = Trade | NonTrade
+
+
+@dataclass
+class PartialTrade:
+	summary:      str
+	trading_pair: TradingPair
+	base_asset:   Operation | None = None
+	quote_asset:  Operation | None = None
+	trading_fee:  Operation | None = None
+
+	def complete(self) -> Trade:
+		return Trade(**vars(self))

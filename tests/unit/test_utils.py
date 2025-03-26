@@ -6,8 +6,7 @@ from nd2k import utils
 from nd2k.types import (
 	Operation,
 	OperationType,
-	Trade,
-	TradeOperations,
+	PartialTrade,
 	TradingPair,
 )
 from .helpers import create_test_operation
@@ -139,31 +138,31 @@ def test_create_operation() -> None:
 	assert actual == expected
 
 
-def test_create_trade_from_base_asset() -> None:
+def test_create_partial_trade_from_base_asset() -> None:
 	base = create_test_operation(
 		summary = "Compra(ABC/XYZ)",
 		type    = OperationType.BUY,
 		symbol  = "ABC"
 	)
-	actual   = utils.create_trade(base)
-	expected = Trade(
+	actual   = utils.create_partial_trade(base)
+	expected = PartialTrade(
 		summary      = "Compra(ABC/XYZ)",
-		operations   = TradeOperations(base_asset=base),
-		trading_pair = TradingPair("ABC", "XYZ")
+		trading_pair = TradingPair("ABC", "XYZ"),
+		base_asset   = base,
 	)
 	assert actual == expected
 
 
-def test_create_trade_from_quote_asset() -> None:
+def test_create_partial_trade_from_quote_asset() -> None:
 	quote = create_test_operation(
 		summary = "Compra(ABC/XYZ)",
 		type    = OperationType.BUY,
 		symbol  = "XYZ"
 	)
-	actual   = utils.create_trade(quote)
-	expected = Trade(
+	actual   = utils.create_partial_trade(quote)
+	expected = PartialTrade(
 		summary      = "Compra(ABC/XYZ)",
-		operations   = TradeOperations(quote_asset=quote),
-		trading_pair = TradingPair("ABC", "XYZ")
+		trading_pair = TradingPair("ABC", "XYZ"),
+		quote_asset  = quote,
 	)
 	assert actual == expected

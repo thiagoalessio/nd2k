@@ -6,7 +6,7 @@ from decimal import Decimal
 from typing import cast
 from collections import defaultdict
 from . import utils, queries as q
-from .types import Operation, OperationType, Trade, NonTrade, Transaction
+from .types import Operation, OperationType, Trade, NonTrade, Transaction, PartialTrade
 
 
 csv_type = list[list[str]]
@@ -42,9 +42,9 @@ def read_input_file(input_file: str) -> csv_type:
 
 
 def organize(lines: csv_type) -> list[Transaction]:
-	trades = []
-	non_trades = []
-	partial_trades: list[Trade] = []
+	trades: list[Trade] = []
+	non_trades: list[NonTrade] = []
+	partial_trades: list[PartialTrade] = []
 
 	for line in reversed(lines[1:]):
 		op = utils.create_operation(line)
@@ -59,30 +59,30 @@ def organize(lines: csv_type) -> list[Transaction]:
 		tr = create_or_update_trade(op, partial_trades)
 
 		if q.is_completed(tr):
-			trades.append(tr)
+			trades.append(tr.complete())
 			partial_trades.remove(tr)
 
 	if len(partial_trades):
-		raise ValueError("Input has incomplete trades")
+		raise ValueError("Input has partial trades")
 
 	return cast(list[Transaction], trades + non_trades)
 
 
-def create_or_update_trade(op: Operation, partial_trades: list[Trade]) -> Trade:
+def create_or_update_trade(op: Operation, partial_trades: list[PartialTrade]) -> PartialTrade:
 	for tr in partial_trades:
 		if q.fits_as_base_asset(op, tr):
-			tr.operations.base_asset = op
+			tr.base_asset = op
 			return tr
 
 		if q.fits_as_quote_asset(op, tr):
-			tr.operations.quote_asset = op
+			tr.quote_asset = op
 			return tr
 
 		if q.fits_as_trading_fee(op, tr):
-			tr.operations.trading_fee = op
+			tr.trading_fee = op
 			return tr
 
-	tr = utils.create_trade(op)
+	tr = utils.create_partial_trade(op)
 	partial_trades.append(tr)
 	return tr
 
@@ -105,17 +105,15 @@ def combine(transactions: list[Transaction]) -> list[Transaction]:
 
 
 def combine_trades(lst: list[Trade]) -> Trade:
-	base  = cast(Operation, lst[0].operations.base_asset)
-	quote = cast(Operation, lst[0].operations.quote_asset)
-	fee   = cast(Operation, lst[0].operations.trading_fee)
+	base  = lst[0].base_asset
+	quote = lst[0].quote_asset
+	fee   = lst[0].trading_fee
 
-	base.amount  = Decimal(sum(cast(Operation, i.operations.base_asset).amount  for i in lst))
-	quote.amount = Decimal(sum(cast(Operation, i.operations.quote_asset).amount for i in lst))
-	fee.amount   = Decimal(sum(cast(Operation, i.operations.trading_fee).amount for i in lst))
+	base.amount  = Decimal(sum(i.base_asset.amount  for i in lst))
+	quote.amount = Decimal(sum(i.quote_asset.amount for i in lst))
+	fee.amount   = Decimal(sum(i.trading_fee.amount for i in lst))
 
-	trade = utils.create_trade(base)
-	trade.operations.quote_asset = quote
-	trade.operations.trading_fee = fee
+	trade = utils.create_trade(base, quote, fee)
 	return trade
 
 
@@ -137,38 +135,34 @@ def universal_format(transactions: list[Transaction]) -> csv_type:
 		if isinstance(t, Trade):
 			lines.append(format_trade(t))
 		else:
-			lines.append(format_non_trade(cast(NonTrade, t)))
+			lines.append(format_non_trade(t))
 
 	return lines
 
 
 def format_trade(t: Trade) -> list[str]:
-	base_asset  = cast(Operation, t.operations.base_asset)
-	quote_asset = cast(Operation, t.operations.quote_asset)
-	trading_fee = cast(Operation, t.operations.trading_fee)
-
-	if base_asset.type == OperationType.BUY:
-		sent_amount = quote_asset.amount
-		sent_symbol = quote_asset.symbol
-		recv_amount = base_asset.amount
-		recv_symbol = base_asset.symbol
+	if t.base_asset.type == OperationType.BUY:
+		sent_amount = t.quote_asset.amount
+		sent_symbol = t.quote_asset.symbol
+		recv_amount = t.base_asset.amount
+		recv_symbol = t.base_asset.symbol
 	else:
-		sent_amount = base_asset.amount
-		sent_symbol = base_asset.symbol
-		recv_amount = quote_asset.amount
-		recv_symbol = quote_asset.symbol
+		sent_amount = t.base_asset.amount
+		sent_symbol = t.base_asset.symbol
+		recv_amount = t.quote_asset.amount
+		recv_symbol = t.quote_asset.symbol
 
 	return [
-		utils.format_date(base_asset.date), # Date
+		utils.format_date(t.base_asset.date), # Date
 		f"{sent_amount}",                   # Sent Amount
 		f"{sent_symbol}",                   # Sent Currency
 		f"{recv_amount}",                   # Received Amount
 		f"{recv_symbol}",                   # Received Currency
-		f"{trading_fee.amount}",            # Fee Amount
-		f"{trading_fee.symbol}",            # Fee Currency
+		f"{t.trading_fee.amount}",          # Fee Amount
+		f"{t.trading_fee.symbol}",          # Fee Currency
 		"",                                 # Net Worth Amount
 		"",                                 # Net Worth Currency
-		utils.koinly_tag(base_asset.type),  # Label
+		utils.koinly_tag(t.base_asset.type), # Label
 		"",                                 # Description
 		"",                                 # TxHash
 	]

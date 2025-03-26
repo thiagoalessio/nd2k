@@ -6,14 +6,14 @@ from decimal import Decimal
 from functools import reduce
 from typing import Any, Callable, cast
 from . import queries as q
-from nd2k.types import (
+from .types import (
+	NonTrade,
 	Operation,
 	OperationType,
+	PartialTrade,
 	Trade,
-	TradeOperations,
 	TradingPair,
 	Transaction,
-	NonTrade,
 )
 
 
@@ -86,14 +86,21 @@ def create_operation(csv_line: list[str]) -> Operation:
 	)
 
 
-def create_trade(op: Operation) -> Trade:
-	tr = Trade(
-		summary      = op.summary,
-		operations   = TradeOperations(),
-		trading_pair = parse_trading_pair(op.summary))
+def create_trade(base: Operation, quote: Operation, fee: Operation) -> Trade:
+	return Trade(
+		summary      = base.summary,
+		trading_pair = parse_trading_pair(base.summary),
+		base_asset   = base,
+		quote_asset  = quote,
+		trading_fee  = fee)
 
-	tr.operations.base_asset  = op if q.fits_as_base_asset(op, tr)  else None
-	tr.operations.quote_asset = op if q.fits_as_quote_asset(op, tr) else None
+
+def create_partial_trade(op: Operation) -> PartialTrade:
+	tr = PartialTrade(
+		summary      = op.summary,
+		trading_pair = parse_trading_pair(op.summary))
+	tr.base_asset  = op if q.fits_as_base_asset(op, tr)  else None
+	tr.quote_asset = op if q.fits_as_quote_asset(op, tr) else None
 	return tr
 
 
