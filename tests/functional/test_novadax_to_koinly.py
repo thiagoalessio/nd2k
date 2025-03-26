@@ -20,7 +20,7 @@ def create_input_file(tmp_path: Path, datatable: DataTable) -> None:
 		writer.writerows(datatable)
 
 
-@when("they are processed")
+@when("the file is processed")
 def invoke_nd2k_tool(tmp_path: Path, monkeypatch: Any) -> None:
 	file = tmp_path / "temp.csv"
 	monkeypatch.setattr("sys.argv", ["nd2k", str(file)])

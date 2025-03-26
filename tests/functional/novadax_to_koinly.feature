@@ -23,7 +23,7 @@ Feature: Convert NovaDAX CSV to Koinly-compatible transactions
 			| 24/10/2024 16:19:22 | Saque de criptomoedas         | DCR      | -1,54256146 DCR(≈R$106.55)          | Sucesso |
 			| 28/09/2024 07:08:35 | Compra(TIP/BRL)               | BRL      | R$ -51,01                           | Sucesso |
 
-		When they are processed
+		When the file is processed
 
 		Then a Koinly trades file should be created with the following transactions:
 			| date                | pair         | side |    amount |  total | fee_amount | fee_currency | orderid | tradeid |
@@ -31,7 +31,7 @@ Feature: Convert NovaDAX CSV to Koinly-compatible transactions
 			| 2024-09-28 17:19:53 | MEMERUNE/BRL | SELL |    205.19 |  89.48 |   0.39     | BRL          |         |         |
 			| 2024-09-28 07:08:35 | TIP/BRL      | BUY  | 200787.00 |  51.01 | 863.3841   | TIP          |         |         |
 
-		Then a Koinly non_trades file should be created with the following transactions:
+		And a Koinly non_trades file should be created with the following transactions:
 			| date                |           amount | symbol   | tag      | txhash |
 			| 2024-09-23 20:13:47 |       5.00       | BRL      | reward   |        |
 			| 2024-10-27 12:29:24 | 1609546.768462   | PUNKAI   | deposit  |        |
