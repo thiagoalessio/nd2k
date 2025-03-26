@@ -34,7 +34,7 @@ def entrypoint() -> None:
 
 
 def read_input_file(input_file: str) -> csv_type:
-	with open(input_file, "r") as file:
+	with open(input_file, "r", encoding="utf-8", errors="ignore") as file:
 		return list(csv.reader(file))
 
 
