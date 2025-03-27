@@ -48,6 +48,11 @@ class NonTrade: # a.k.a. "Simple Transaction"
 
 
 class TradingPair(NamedTuple):
+	"""
+	In a trading pair like BTC/EUR:
+	- Base asset (BTC): The asset being bought or sold.
+	- Quote asset (EUR): The asset used to price the base asset.
+	"""
 	base:  str
 	quote: str
 
