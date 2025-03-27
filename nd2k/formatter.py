@@ -33,18 +33,18 @@ def format_trade(t: Trade) -> list[str]:
 		recv_symbol = t.quote_asset.symbol
 
 	return [
-		format_date(t.base_asset.date),          # Date
-		f"{sent_amount}",                        # Sent Amount
-		f"{sent_symbol}",                        # Sent Currency
-		f"{recv_amount}",                        # Received Amount
-		f"{recv_symbol}",                        # Received Currency
-		f"{t.trading_fee.amount}",               # Fee Amount
-		f"{t.trading_fee.symbol}",               # Fee Currency
-		"",                                      # Net Worth Amount
-		"",                                      # Net Worth Currency
-		KoinlyTag[t.base_asset.type.name].value, # Label
-		t.base_asset.summary,                    # Description
-		"",                                      # TxHash
+		format_date(t.base_asset.date), # Date
+		f"{sent_amount}",               # Sent Amount
+		f"{sent_symbol}",               # Sent Currency
+		f"{recv_amount}",               # Received Amount
+		f"{recv_symbol}",               # Received Currency
+		f"{t.trading_fee.amount}",      # Fee Amount
+		f"{t.trading_fee.symbol}",      # Fee Currency
+		"",                             # Net Worth Amount
+		"",                             # Net Worth Currency
+		KoinlyTag[t.type.name].value,   # Label
+		t.base_asset.summary,           # Description
+		"",                             # TxHash
 	]
 
 

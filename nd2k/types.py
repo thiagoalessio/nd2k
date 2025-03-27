@@ -78,6 +78,10 @@ class Trade:
 	def date(self) -> datetime:
 		return self.base_asset.date
 
+	@property
+	def type(self) -> OperationType:
+		return self.base_asset.type
+
 
 Transaction = Trade | NonTrade
 TransactionGroups = defaultdict[str, list[Transaction]]
