@@ -10,8 +10,9 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v4
-    - run: make deps
-    - run: make build
+    - run: python -m pip install --upgrade pipenv wheel
+    - run: pipenv install --deploy --dev
+    - run: pipenv run build
 
     - name: Upload artifacts
       uses: actions/upload-artifact@v4
@@ -77,8 +78,9 @@ jobs:
         name: dist
         path: dist/
 
-    - run: make deps
-    - run: make publish-to-pypi
+    - run: python -m pip install --upgrade pipenv wheel
+    - run: pipenv install --deploy --dev
+    - run: pipenv run publish_to_pypi
       env:
         FLIT_USERNAME: __token__
         FLIT_PASSWORD: ${{ secrets.PYPI_TOKEN }}

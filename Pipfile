@@ -1,0 +1,74 @@
+[[source]]
+url        = "https://pypi.org/simple"
+verify_ssl = true
+name       = "pypi"
+
+[dev-packages]
+bandit     = "1.8.3"
+build      = "1.2.2.post1"
+flit       = "3.12.0"
+lxml       = "5.3.1"
+mypy       = "1.15.0"
+pyflakes   = "3.2.0"
+pytest     = "8.3.5"
+pytest-bdd = "8.1.0"
+pytest-cov = "6.0.0"
+radon      = "6.0.1"
+
+[scripts]
+
+build = """
+	python -m build
+"""
+
+build_container = """
+	podman build -t nd2k .
+"""
+
+clean = """
+	rm -rf build dist nd2k.egg-info
+"""
+
+clear_cache = """
+	find . -type d -name '__pycache__' -exec rm -r {} +
+"""
+
+install = """
+	flit install
+"""
+
+publish_to_pypi = """
+	flit publish
+"""
+
+tests = """
+	pytest -vv -s --gherkin-terminal-reporter tests
+"""
+
+coverage = """
+	pytest -vv -s --cov=nd2k --cov=tests --cov-branch --cov-report=xml tests
+"""
+
+coverage_html = """
+	pytest -vv -s --cov=nd2k --cov=tests --cov-branch --cov-report=html tests
+"""
+
+lint = """
+	pyflakes nd2k tests
+"""
+
+type_checker = """
+	mypy nd2k tests --strict
+"""
+
+cyclomatic_complexity = """
+	radon cc nd2k tests --show-complexity --show-closures --total-average
+"""
+
+maintainability_index = """
+	radon mi nd2k tests --show
+"""
+
+security_scan = """
+	bandit -c pyproject.toml -r .
+"""

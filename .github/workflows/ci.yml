@@ -9,12 +9,14 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v4
-    - run: make deps
-    - run: make coverage
-    - run: make lint
-    - run: make type-checker
-    - run: make complexity-metrics
-    - run: make security-scan
+    - run: python -m pip install --upgrade pipenv wheel
+    - run: pipenv install --deploy --dev
+    - run: pipenv run coverage
+    - run: pipenv run lint
+    - run: pipenv run type_checker
+    - run: pipenv run cyclomatic_complexity
+    - run: pipenv run maintainability_index
+    - run: pipenv run security_scan
 
     - name: Upload coverage reports to Codacy
       env:
