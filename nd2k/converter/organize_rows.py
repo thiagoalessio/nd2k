@@ -76,7 +76,7 @@ def organize_rows_failed(lst: list[PartialTrade]) -> None:
 	If by the end of "organize_rows" we still have partial trades,
 	something is wrong and the program shouldn't proceed.
 	"""
-	error_msg = "Error! The script went through all rows in the NovaDAX CSV"
+	error_msg = "Error! The script went through all rows in the NovaDAX CSV "
 	error_msg+= "and could not complete the following trades:\n\n"
 	error_msg+= "\n".join(str(pt) for pt in lst)
 	error_msg+= "\nThe input file may be faulty, "
