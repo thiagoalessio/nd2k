@@ -64,7 +64,7 @@ Feature: Convert NovaDAX CSV to Koinly-compatible transactions
 			"""
 			Error! The script went through all rows in the NovaDAX CSV and could not complete the following trades:
 
-			base asset:  None
+			base asset:  <empty>
 			quote asset: 2024-09-28 17:18:43 | Compra(MEMERUNE/BRL) | BRL | 100.00 | Sucesso
 			trading fee: 2024-09-28 17:18:43 | Taxa de transação | MEMERUNE | 4.00 | Sucesso
 

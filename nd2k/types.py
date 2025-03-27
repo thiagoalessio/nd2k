@@ -30,13 +30,6 @@ class Operation:
 	amount:  Decimal
 	status:  str
 
-	def __repr__(self) -> str:
-		return " | ".join([
-			str(v)
-			for k,v in vars(self).items()
-			if k != "type"
-		])
-
 
 @dataclass
 class NonTrade: # a.k.a. "Simple Transaction"
@@ -45,6 +38,10 @@ class NonTrade: # a.k.a. "Simple Transaction"
 	@property
 	def date(self) -> datetime:
 		return self.operation.date
+
+	@property
+	def summary(self) -> str:
+		return self.operation.summary
 
 
 class TradingPair(NamedTuple):
@@ -84,9 +81,3 @@ class PartialTrade:
 
 	def complete(self) -> Trade:
 		return Trade(**vars(self))
-
-	def __repr__(self) -> str:
-		s = f"base asset:  {self.base_asset}\n"
-		s+= f"quote asset: {self.quote_asset}\n"
-		s+= f"trading fee: {self.trading_fee}\n"
-		return s

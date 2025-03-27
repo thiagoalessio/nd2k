@@ -1,7 +1,6 @@
 from decimal import Decimal
 from typing import cast
 
-from ..queries import is_trade
 from ..types import TransactionGroups, Transaction, Trade, NonTrade
 from ..utils import parse_trading_pair
 
@@ -14,7 +13,7 @@ def combine_groups(groups: TransactionGroups) -> list[Transaction]:
 	combined: list[Transaction] = []
 
 	for grp in groups.values():
-		if all(is_trade(i) for i in grp):
+		if all(isinstance(i, Trade) for i in grp):
 			combined.append(combine_trades(cast(list[Trade], grp)))
 		else:
 			combined.append(combine_non_trades(cast(list[NonTrade], grp)))

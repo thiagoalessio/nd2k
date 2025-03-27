@@ -1,4 +1,4 @@
-from .types import Operation, PartialTrade, Transaction, Trade
+from .types import Operation, PartialTrade
 
 
 def is_successful(op: Operation) -> bool:
@@ -65,7 +65,3 @@ def get_any_asset(tr: PartialTrade) -> Operation:
 	if any_asset:
 		return any_asset
 	raise ValueError("Empty Trade")
-
-
-def is_trade(t: Transaction) -> bool:
-	return isinstance(t, Trade)
