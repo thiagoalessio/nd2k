@@ -32,18 +32,18 @@ def format_trade(t: Trade) -> list[str]:
 		recv_symbol = t.quote_asset.symbol
 
 	return [
-		format_date(t.base_asset.date), # Date
-		f"{sent_amount}",               # Sent Amount
-		f"{sent_symbol}",               # Sent Currency
-		f"{recv_amount}",               # Received Amount
-		f"{recv_symbol}",               # Received Currency
-		f"{t.trading_fee.amount}",      # Fee Amount
-		f"{t.trading_fee.symbol}",      # Fee Currency
-		"",                             # Net Worth Amount
-		"",                             # Net Worth Currency
-		koinly_tag(t.base_asset.type),  # Label
-		t.base_asset.summary,           # Description
-		"",                             # TxHash
+		format_date(t.base_asset.date),     # Date
+		f"{sent_amount}",                   # Sent Amount
+		f"{sent_symbol}",                   # Sent Currency
+		f"{recv_amount}",                   # Received Amount
+		f"{recv_symbol}",                   # Received Currency
+		f"{t.trading_fee.amount}",          # Fee Amount
+		f"{t.trading_fee.symbol}",          # Fee Currency
+		"",                                 # Net Worth Amount
+		"",                                 # Net Worth Currency
+		koinly_tag(t.base_asset.type.name), # Label
+		t.base_asset.summary,               # Description
+		"",                                 # TxHash
 	]
 
 
@@ -62,18 +62,18 @@ def format_non_trade(t: NonTrade) -> list[str]:
 		recv_symbol = str(op.symbol)
 
 	return [
-		format_date(op.date), # Date
-		sent_amount,          # Sent Amount
-		sent_symbol,          # Sent Currency
-		recv_amount,          # Received Amount
-		recv_symbol,          # Received Currency
-		"",                   # Fee Amount
-		"",                   # Fee Currency
-		"",                   # Net Worth Amount
-		"",                   # Net Worth Currency
-		koinly_tag(op.type),  # Label
-		op.summary,           # Description
-		"",                   # TxHash
+		format_date(op.date),     # Date
+		sent_amount,              # Sent Amount
+		sent_symbol,              # Sent Currency
+		recv_amount,              # Received Amount
+		recv_symbol,              # Received Currency
+		"",                       # Fee Amount
+		"",                       # Fee Currency
+		"",                       # Net Worth Amount
+		"",                       # Net Worth Currency
+		koinly_tag(op.type.name), # Label
+		op.summary,               # Description
+		"",                       # TxHash
 	]
 
 
@@ -81,15 +81,15 @@ def format_date(data: datetime) -> str:
 	return data.strftime("%Y-%m-%d %H:%M:%S")
 
 
-def koinly_tag(op_type: OperationType) -> str:
-	return {
-		"CRYPTO_DEPOSIT":  "deposit",
-		"FIAT_DEPOSIT":    "deposit",
-		"CRYPTO_WITHDRAW": "withdraw",
-		"FIAT_WITHDRAW":   "withdraw",
-		"WITHDRAW_FEE":    "fee",
-		"REDEEMED_BONUS":  "reward",
-		"BUY":             "trade",
-		"SELL":            "trade",
-		"TRADING_FEE":     "fee",
-	}[op_type.name]
+def koinly_tag(op_type_name: str) -> str:
+	if op_type_name in ["CRYPTO_DEPOSIT", "FIAT_DEPOSIT"]:
+		return "deposit"
+	if op_type_name in ["CRYPTO_WITHDRAW", "FIAT_WITHDRAW"]:
+		return "withdraw"
+	if op_type_name in ["WITHDRAW_FEE", "TRADING_FEE"]:
+		return "fee"
+	if op_type_name in ["BUY", "SELL"]:
+		return "trade"
+	if op_type_name in ["REDEEMED_BONUS"]:
+		return "reward"
+	return ""

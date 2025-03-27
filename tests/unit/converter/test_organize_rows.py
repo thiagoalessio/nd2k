@@ -8,7 +8,7 @@ from nd2k.converter.organize_rows import (
 	create_partial_trade,
 )
 from nd2k.types import OperationType, PartialTrade, TradingPair, Operation
-from ..helpers import create_test_operation
+from ..helpers import fake_op
 
 
 def test_parse_date() -> None:
@@ -41,10 +41,8 @@ def test_parse_amount_multiple_commas() -> None:
 
 def test_parse_amount_invalid() -> None:
 	data = "No digits present in string"
-
 	with pytest.raises(ValueError) as e:
 		parse_amount(data)
-
 	assert str(e.value) == f"No numeric values found in \"{data}\""
 
 
@@ -69,7 +67,7 @@ def test_create_operation() -> None:
 
 
 def test_create_partial_trade_from_base_asset() -> None:
-	base = create_test_operation(
+	base = fake_op(
 		summary = "Compra(ABC/XYZ)",
 		type    = OperationType.BUY,
 		symbol  = "ABC"
@@ -84,7 +82,7 @@ def test_create_partial_trade_from_base_asset() -> None:
 
 
 def test_create_partial_trade_from_quote_asset() -> None:
-	quote = create_test_operation(
+	quote = fake_op(
 		summary = "Compra(ABC/XYZ)",
 		type    = OperationType.BUY,
 		symbol  = "XYZ"

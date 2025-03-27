@@ -9,7 +9,7 @@ from nd2k.types import (
 )
 
 
-def create_test_operation(**kwargs: Any) -> Operation:
+def fake_op(**kwargs: Any) -> Operation:
 	defaults = {
 		"date":    datetime.now(),
 		"type":    OperationType.BUY,
@@ -21,9 +21,9 @@ def create_test_operation(**kwargs: Any) -> Operation:
 	return Operation(**{**defaults, **kwargs})
 
 
-def create_test_trade(**kwargs: Any) -> PartialTrade:
+def fake_partial_trade(**kwargs: Any) -> PartialTrade:
 	defaults = {
-		"summary":      "Test",
+		"summary": "BUY(ABC/XYZ)",
 		"trading_pair": TradingPair(base="ABC", quote="XYZ"),
 	}
 	return PartialTrade(**{**defaults, **kwargs})
