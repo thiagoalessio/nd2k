@@ -14,7 +14,7 @@ Converts NovaDAX CSV reports to formats accepted by Koinly.
 
 ## Installation and Usage
 
-	pip3 install nd2k
+	pip3 install --upgrade nd2k
 	nd2k novadax-file.csv
 
 Alternatively, you can use a container image:
