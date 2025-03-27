@@ -1,4 +1,4 @@
-from .types import Operation, PartialTrade
+from .types import Operation, PartialTrade, Trade
 
 
 def is_successful(op: Operation) -> bool:
@@ -50,17 +50,17 @@ def is_trading_fee(op: Operation) -> bool:
 	return op.type.name == "TRADING_FEE"
 
 
-def is_a_purchase(tr: PartialTrade) -> bool:
+def is_a_purchase(tr: Trade | PartialTrade) -> bool:
 	any_asset = get_any_asset(tr)
 	return any_asset.type.name == "BUY"
 
 
-def is_a_sale(tr: PartialTrade) -> bool:
+def is_a_sale(tr: Trade | PartialTrade) -> bool:
 	any_asset = get_any_asset(tr)
 	return any_asset.type.name == "SELL"
 
 
-def get_any_asset(tr: PartialTrade) -> Operation:
+def get_any_asset(tr: Trade | PartialTrade) -> Operation:
 	any_asset = tr.base_asset or tr.quote_asset
 	if any_asset:
 		return any_asset

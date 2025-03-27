@@ -21,6 +21,18 @@ class OperationType(Enum):
 	TRADING_FEE     = "Taxa de transação"
 
 
+class KoinlyTag(Enum):
+	CRYPTO_DEPOSIT  = "deposit"
+	FIAT_DEPOSIT    = "deposit"
+	CRYPTO_WITHDRAW = "withdraw"
+	FIAT_WITHDRAW   = "withdraw"
+	WITHDRAW_FEE    = "fee"
+	REDEEMED_BONUS  = "reward"
+	BUY             = "trade"
+	SELL            = "trade"
+	TRADING_FEE     = "fee"
+
+
 @dataclass
 class Operation:
 	date:    datetime
