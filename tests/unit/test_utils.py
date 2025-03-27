@@ -5,8 +5,7 @@ from nd2k.types import TradingPair
 
 
 def test_output_file() -> None:
-	data = "myfile.csv", "koinly_trades"
-	assert output_file(*data) == "myfile_koinly_trades.csv"
+	assert output_file("myfile.csv") == "myfile_koinly_universal.csv"
 
 
 def test_parse_trading_pair() -> None:

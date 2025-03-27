@@ -22,8 +22,7 @@ def main() -> None:
 	ordered      = utils.order_by_date(combined)
 	formatted    = formatter.universal(ordered)
 
-	output_file = utils.output_file(input_file, "koinly_universal")
-	write(output_file, formatted)
+	write(utils.output_file(input_file), formatted)
 
 
 def read(path: str) -> types.CSV:

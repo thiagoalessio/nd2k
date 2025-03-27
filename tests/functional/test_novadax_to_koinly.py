@@ -3,7 +3,7 @@ import pytest
 
 from pathlib import Path
 from typing import Any
-from pytest_bdd import scenarios, given, when, then, parsers
+from pytest_bdd import scenarios, given, when, then
 from nd2k.main import main
 
 
@@ -38,9 +38,9 @@ def invoke_nd2k_tool_with_bad_file(tmp_path: Path, capsys: Any, monkeypatch: Any
 	return str(capsys.readouterr().out)
 
 
-@then(parsers.parse("a Koinly {file_type} file should be created with the following transactions:"))
-def compare_gerenared_file(tmp_path: Path, datatable: DataTable, file_type: str) -> None:
-	file = tmp_path / f"temp_koinly_{file_type}.csv"
+@then("a Koinly universal file should be created with the following transactions:")
+def compare_gerenared_file(tmp_path: Path, datatable: DataTable) -> None:
+	file = tmp_path / "temp_koinly_universal.csv"
 	with file.open("r") as f:
 		result = list(csv.reader(f))
 	assert datatable[1:] == result[1:] # ignoring headers

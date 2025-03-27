@@ -2,9 +2,9 @@ import re
 from .types import TradingPair, Transaction
 
 
-def output_file(path: str, suffix: str) -> str:
+def output_file(path: str) -> str:
 	name = re.sub(r"\.csv$", "", path)
-	return f"{name}_{suffix}.csv"
+	return f"{name}_koinly_universal.csv"
 
 
 def parse_trading_pair(data: str) -> TradingPair:
