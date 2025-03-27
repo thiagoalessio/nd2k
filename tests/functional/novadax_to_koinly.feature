@@ -31,16 +31,16 @@ Feature: Convert NovaDAX CSV to Koinly-compatible transactions
 		When the file is processed
 
 		Then a Koinly universal file should be created with the following transactions:
-			| date                | sent_amount   | sent_cur | recv_amount    | recv_cur | fee_amount | fee_cur  | nwa | nwc | label    | desc | txh |
-			| 2024-09-23 20:01:41 |               |          |   40000.00     | BRL      |            |          |     |     | deposit  |      |     |
-			| 2024-09-23 20:13:47 |               |          |      10.00     | BRL      |            |          |     |     | reward   |      |     |
-			| 2024-09-28 07:08:35 |   51.01       | BRL      |  200787.00     | TIP      | 863.3841   | TIP      |     |     | trade    |      |     |
-			| 2024-09-28 17:18:43 |  255.04       | BRL      |     762.77     | MEMERUNE |   5.559911 | MEMERUNE |     |     | trade    |      |     |
-			| 2024-09-28 17:19:53 |  205.19       | MEMERUNE |      89.48     | BRL      |   0.39     | BRL      |     |     | trade    |      |     |
-			| 2024-10-24 16:19:22 |    1.54256146 | DCR      |                |          |            |          |     |     | withdraw |      |     |
-			| 2024-10-24 16:19:23 |    0.01       | DCR      |                |          |            |          |     |     | fee      |      |     |
-			| 2024-10-27 12:29:24 |               |          | 1609546.768462 | PUNKAI   |            |          |     |     | deposit  |      |     |
-			| 2024-11-19 12:25:50 | 8900.00       | BRL      |                |          |            |          |     |     | withdraw |      |     |
+			| date                | sent_amount   | sent_cur | recv_amount    | recv_cur | fee_amount | fee_cur  | nwa | nwc | label    | description                   | txh |
+			| 2024-09-23 20:01:41 |               |          |   40000.00     | BRL      |            |          |     |     | deposit  | Depósito em Reais             |     |
+			| 2024-09-23 20:13:47 |               |          |      10.00     | BRL      |            |          |     |     | reward   | Redeemed Bonus                |     |
+			| 2024-09-28 07:08:35 |   51.01       | BRL      |  200787.00     | TIP      | 863.3841   | TIP      |     |     | trade    | Compra(TIP/BRL)               |     |
+			| 2024-09-28 17:18:43 |  255.04       | BRL      |     762.77     | MEMERUNE |   5.559911 | MEMERUNE |     |     | trade    | Compra(MEMERUNE/BRL)          |     |
+			| 2024-09-28 17:19:53 |  205.19       | MEMERUNE |      89.48     | BRL      |   0.39     | BRL      |     |     | trade    | Venda(MEMERUNE/BRL)           |     |
+			| 2024-10-24 16:19:22 |    1.54256146 | DCR      |                |          |            |          |     |     | withdraw | Saque de criptomoedas         |     |
+			| 2024-10-24 16:19:23 |    0.01       | DCR      |                |          |            |          |     |     | fee      | Taxa de saque de criptomoedas |     |
+			| 2024-10-27 12:29:24 |               |          | 1609546.768462 | PUNKAI   |            |          |     |     | deposit  | Depósito de criptomoedas      |     |
+			| 2024-11-19 12:25:50 | 8900.00       | BRL      |                |          |            |          |     |     | withdraw | Saque em Reais                |     |
 
 
 	Scenario: NovaDAX file is incomplete

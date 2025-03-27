@@ -42,7 +42,7 @@ def format_trade(t: Trade) -> list[str]:
 		"",                             # Net Worth Amount
 		"",                             # Net Worth Currency
 		koinly_tag(t.base_asset.type),  # Label
-		"",                             # Description
+		t.base_asset.summary,           # Description
 		"",                             # TxHash
 	]
 
@@ -72,7 +72,7 @@ def format_non_trade(t: NonTrade) -> list[str]:
 		"",                   # Net Worth Amount
 		"",                   # Net Worth Currency
 		koinly_tag(op.type),  # Label
-		"",                   # Description
+		op.summary,           # Description
 		"",                   # TxHash
 	]
 
