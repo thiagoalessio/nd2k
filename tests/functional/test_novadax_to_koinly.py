@@ -1,5 +1,4 @@
 import csv
-import pytest
 
 from pathlib import Path
 from typing import Any
@@ -32,9 +31,7 @@ def invoke_nd2k_tool(tmp_path: Path, monkeypatch: Any) -> None:
 def invoke_nd2k_tool_with_bad_file(tmp_path: Path, capsys: Any, monkeypatch: Any) -> str:
 	file = tmp_path / "temp.csv"
 	monkeypatch.setattr("sys.argv", ["nd2k", str(file)])
-	with pytest.raises(SystemExit) as exc_info:
-		main()
-	assert exc_info.value.code == 1
+	main()
 	return str(capsys.readouterr().out)
 
 

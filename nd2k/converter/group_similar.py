@@ -5,9 +5,9 @@ from ..queries import is_trade
 from ..types import Transaction, TransactionGroups, Trade, NonTrade
 
 
-def group_similar_by_timestamp(lst: list[Transaction]) -> TransactionGroups:
+def group_similar_by_summary(lst: list[Transaction]) -> TransactionGroups:
 	"""
-	Group transactions that have the same timestamp+summary
+	Group transactions that have the same summary
 	"""
 	groups: TransactionGroups = defaultdict(list)
 	for t in lst:
@@ -17,9 +17,8 @@ def group_similar_by_timestamp(lst: list[Transaction]) -> TransactionGroups:
 
 
 def get_group_index(t: Transaction) -> str:
-	idx = str(t.date)
 	if is_trade(t):
-		idx += cast(Trade, t).summary
+		return cast(Trade, t).summary
 	else:
-		idx += cast(NonTrade, t).operation.summary
-	return idx
+		t = cast(NonTrade, t)
+		return f"{t.operation.summary}+{t.operation.symbol}"

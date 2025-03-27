@@ -74,7 +74,7 @@ def create_or_update_trade(op: Operation, lst: list[PartialTrade]) -> PartialTra
 def organize_rows_failed(lst: list[PartialTrade]) -> None:
 	"""
 	If by the end of "organize_rows" we still have partial trades,
-	something is wrong and the program shouldn't proceed.
+	report the errors, but proceed with the Koinly CSV generation.
 	"""
 	error_msg = "Error! The script went through all rows in the NovaDAX CSV "
 	error_msg+= "and could not complete the following trades:\n\n"
@@ -84,8 +84,8 @@ def organize_rows_failed(lst: list[PartialTrade]) -> None:
 	error_msg+= "If you are sure the input file is correct, please open an "
 	error_msg+= "issue at https://github.com/thiagoalessio/nd2k/issues/new "
 	error_msg+= "and attach the file that caused this error.\n"
+	error_msg+= "The transactions above were excluded from the final report."
 	print(error_msg)
-	exit(1)
 
 
 def create_operation(csv_line: list[str]) -> Operation:
