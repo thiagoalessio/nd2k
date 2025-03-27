@@ -1,5 +1,8 @@
 all: test coverage-html lint type-checker complexity-metrics security-scan
 
+clear-cache:
+	find . -type d -name "__pycache__" -exec rm -r {} +
+
 clean:
 	rm -rf build dist nd2k.egg-info
 

@@ -1,33 +1,10 @@
 import re
-import unicodedata
-
-from datetime import datetime
-from decimal import Decimal
-from functools import reduce
-from typing import Any, Callable, cast
-from . import queries as q
-from .types import (
-	NonTrade,
-	Operation,
-	OperationType,
-	PartialTrade,
-	Trade,
-	TradingPair,
-	Transaction,
-)
+from .types import TradingPair, Transaction
 
 
-def output_filename(input_filename: str, suffix: str) -> str:
-	name = re.sub(r"\.csv$", "", input_filename)
+def output_file(path: str, suffix: str) -> str:
+	name = re.sub(r"\.csv$", "", path)
 	return f"{name}_{suffix}.csv"
-
-
-def parse_date(data: str) -> datetime:
-	return datetime.strptime(data, "%d/%m/%Y %H:%M:%S")
-
-
-def format_date(data: datetime) -> str:
-	return data.strftime("%Y-%m-%d %H:%M:%S")
 
 
 def parse_trading_pair(data: str) -> TradingPair:
@@ -37,81 +14,5 @@ def parse_trading_pair(data: str) -> TradingPair:
 	raise ValueError(f"No trading pair found in \"{data}\"")
 
 
-def format_trading_pair(data: TradingPair) -> str:
-	return f"{data.base}/{data.quote}"
-
-
-def parse_amount(data: str) -> Decimal:
-	pattern = r"^\D*([,\d]+)"
-	matches = re.search(pattern, data)
-
-	if not matches:
-		raise ValueError(f"No numeric values found in \"{data}\"")
-
-	parts = matches.group(1).split(",")
-	last_part = parts.pop()
-
-	# number has no commas, no decimals
-	if not len(parts):
-		return Decimal(last_part)
-
-	# last comma acting as decimal separator
-	int_part = "".join(parts)
-	return Decimal(f"{int_part}.{last_part}")
-
-
-def koinly_tag(op_type: OperationType) -> str:
-	return {
-		"CRYPTO_DEPOSIT":  "deposit",
-		"FIAT_DEPOSIT":    "deposit",
-		"CRYPTO_WITHDRAW": "withdraw",
-		"FIAT_WITHDRAW":   "withdraw",
-		"WITHDRAW_FEE":    "fee",
-		"REDEEMED_BONUS":  "reward",
-		"BUY":             "trade",
-		"SELL":            "trade",
-		"TRADING_FEE":     "fee",
-	}[op_type.name]
-
-
-def create_operation(csv_line: list[str]) -> Operation:
-	summary = unicodedata.normalize('NFC', csv_line[1])
-	return Operation(
-		date    = parse_date(csv_line[0]),
-		type    = OperationType(summary.split("(")[0]),
-		summary = summary,
-		symbol  = csv_line[2],
-		amount  = parse_amount(csv_line[3]),
-		status  = csv_line[4],
-	)
-
-
-def create_trade(base: Operation, quote: Operation, fee: Operation) -> Trade:
-	return Trade(
-		summary      = base.summary,
-		trading_pair = parse_trading_pair(base.summary),
-		base_asset   = base,
-		quote_asset  = quote,
-		trading_fee  = fee)
-
-
-def create_partial_trade(op: Operation) -> PartialTrade:
-	tr = PartialTrade(
-		summary      = op.summary,
-		trading_pair = parse_trading_pair(op.summary))
-	tr.base_asset  = op if q.fits_as_base_asset(op, tr)  else None
-	tr.quote_asset = op if q.fits_as_quote_asset(op, tr) else None
-	return tr
-
-
-def pipe(data: Any, *funcs: Callable[..., Any]) -> Any:
-	return reduce(lambda x, f: f(x), funcs, data)
-
-
-def combine_group_index(t: Transaction) -> str:
-	idx = str(t.date)
-	if q.is_trade(t):
-		idx += cast(Trade, t).summary
-	else:
-		idx += cast(NonTrade, t).operation.summary
-	return idx
+def order_by_date(lst: list[Transaction]) -> list[Transaction]:
+	return sorted(lst, key=lambda t: t.date)

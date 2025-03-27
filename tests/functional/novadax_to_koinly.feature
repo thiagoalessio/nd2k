@@ -41,3 +41,33 @@ Feature: Convert NovaDAX CSV to Koinly-compatible transactions
 			| 2024-10-24 16:19:23 |    0.01       | DCR      |                |          |            |          |     |     | fee      |      |     |
 			| 2024-10-27 12:29:24 |               |          | 1609546.768462 | PUNKAI   |            |          |     |     | deposit  |      |     |
 			| 2024-11-19 12:25:50 | 8900.00       | BRL      |                |          |            |          |     |     | withdraw |      |     |
+
+
+	Scenario: NovaDAX file is incomplete
+		Given a NovaDAX CSV file has the following operations:
+			| date                | summary              | symbol   | amount                      | status  |
+			| 28/09/2024 17:18:43 | Taxa de transação    | MEMERUNE | -4,00 MEMERUNE(≈R$0.67)     | Sucesso |
+			| 28/09/2024 17:18:43 | Compra(MEMERUNE/BRL) | BRL      | R$ -100,00                  | Sucesso |
+			| 28/09/2024 17:18:43 | Compra(MEMERUNE/BRL) | MEMERUNE | +362,77 MEMERUNE(≈R$155.05) | Sucesso |
+			| 28/09/2024 17:19:53 | Venda(MEMERUNE/BRL)  | BRL      | R$ +89,48                   | Sucesso |
+			| 28/09/2024 17:19:54 | Taxa de transação    | BRL      | R$ -0,39                    | Sucesso |
+			| 28/09/2024 17:18:43 | Taxa de transação    | MEMERUNE | -1,559911 MEMERUNE(≈R$0.67) | Sucesso |
+			| 28/09/2024 17:19:53 | Venda(MEMERUNE/BRL)  | MEMERUNE | -205,19 MEMERUNE(≈R$87.58)  | Sucesso |
+			| 28/09/2024 17:18:43 | Compra(MEMERUNE/BRL) | BRL      | R$ -155,04                  | Sucesso |
+			| 28/09/2024 07:08:35 | Taxa de transação    | TIP      | -863,3841 TIP(≈R$0.22)      | Sucesso |
+			| 28/09/2024 07:08:35 | Compra(TIP/BRL)      | TIP      | +200,787,00 TIP(≈R$51.02)   | Sucesso |
+			| 28/09/2024 07:08:35 | Compra(TIP/BRL)      | BRL      | R$ -51,01                   | Sucesso |
+
+		When I attempt to process the file
+
+		Then the following error should appear:
+			"""
+			Error! The script went through all rows in the NovaDAX CSVand could not complete the following trades:
+
+			base asset:  None
+			quote asset: 2024-09-28 17:18:43 | Compra(MEMERUNE/BRL) | BRL | 100.00 | Sucesso
+			trading fee: 2024-09-28 17:18:43 | Taxa de transação | MEMERUNE | 4.00 | Sucesso
+
+			The input file may be faulty, or the script misinterpreted its contents.
+			If you are sure the input file is correct, please open an issue at https://github.com/thiagoalessio/nd2k/issues/new and attach the file that caused this error.
+			"""

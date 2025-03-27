@@ -15,11 +15,10 @@ Source  = "https://github.com/thiagoalessio/nd2k"
 Tracker = "https://github.com/thiagoalessio/nd2k/issues"
 
 [project.scripts]
-nd2k = "nd2k.main:entrypoint"
+nd2k = "nd2k.main:main"
 
 [tool.mypy]
 strict = true
 
 [tool.bandit]
-exclude_dirs = ['.venv']
 skips = ["B101"]
