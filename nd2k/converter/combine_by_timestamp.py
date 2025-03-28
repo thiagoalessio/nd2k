@@ -2,8 +2,8 @@ from collections import defaultdict
 from decimal import Decimal
 from typing import cast
 
+from .organize_rows import create_partial_trade
 from ..types import TransactionGroups, Transaction, Trade, NonTrade
-from ..utils import parse_trading_pair
 
 
 def combine_by_timestamp(lst: list[Transaction]) -> list[Transaction]:
@@ -37,23 +37,16 @@ def combine_groups(groups: TransactionGroups) -> list[Transaction]:
 
 
 def combine_trades(lst: list[Trade]) -> Trade:
-	base  = lst[0].base_asset
-	quote = lst[0].quote_asset
-	fee   = lst[0].trading_fee
+	pt = create_partial_trade(lst[0].base_asset)
+	pt.quote_asset = lst[0].quote_asset
+	pt.trading_fee = lst[0].trading_fee
+	tr = pt.complete()
 
-	base.amount  = Decimal(sum(i.base_asset.amount  for i in lst))
-	quote.amount = Decimal(sum(i.quote_asset.amount for i in lst))
-	fee.amount   = Decimal(sum(i.trading_fee.amount for i in lst))
+	tr.base_asset.amount  = Decimal(sum(i.base_asset.amount  for i in lst))
+	tr.quote_asset.amount = Decimal(sum(i.quote_asset.amount for i in lst))
+	tr.trading_fee.amount = Decimal(sum(i.trading_fee.amount for i in lst))
 
-	trade = Trade(
-		summary      = base.summary,
-		trading_pair = parse_trading_pair(base.summary),
-		base_asset   = base,
-		quote_asset  = quote,
-		trading_fee  = fee
-	)
-	return trade
-
+	return tr
 
 def combine_non_trades(lst: list[NonTrade]) -> NonTrade:
 	op = lst[0].operation
