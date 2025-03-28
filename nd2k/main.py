@@ -1,7 +1,10 @@
+import re
 import sys
 import os
 import csv
-from . import __version__, types, converter, utils, formatter
+
+from . import __version__, types, converter, formatter
+from .types import Transaction
 
 
 def main() -> None:
@@ -22,10 +25,11 @@ def main() -> None:
 	csv_rows     = read(input_file)
 	transactions = converter.organize_rows(csv_rows)
 	combined     = converter.combine_by_timestamp(transactions)
-	ordered      = utils.order_by_date(combined)
+	ordered      = order_by_date(combined)
 	formatted    = formatter.universal(ordered)
 
-	write(utils.output_file(input_file), formatted)
+	output_file = re.sub(r"\.csv$", "", input_file) + "_koinly_universal.csv"
+	write(output_file, formatted)
 
 
 def read(path: str) -> types.CSV:
@@ -35,6 +39,10 @@ def read(path: str) -> types.CSV:
 	"""
 	with open(path, "r", encoding="utf-8", errors="ignore") as f:
 		return list(reversed(list(csv.reader(f))[1:]))
+
+
+def order_by_date(lst: list[Transaction]) -> list[Transaction]:
+	return sorted(lst, key=lambda t: t.date)
 
 
 def write(path: str, contents: types.CSV) -> None:
