@@ -17,57 +17,57 @@ radon      = "6.0.1"
 
 [scripts]
 build = """
-	python -m build
+python -m build
 """
 
 build_container = """
-	podman build -t nd2k .
+podman build -t nd2k .
 """
 
 clean = """
-	rm -rf build dist nd2k.egg-info
+rm -rf build dist nd2k.egg-info
 """
 
 clear_cache = """
-	find . -type d -name '__pycache__' -exec rm -r {} +
+find . -type d -name '__pycache__' -exec rm -r {} +
 """
 
 install = """
-	flit install
+flit install
 """
 
 publish_to_pypi = """
-	flit publish
+flit publish
 """
 
 tests = """
-	pytest -vv -s --gherkin-terminal-reporter tests
+pytest -vv -s --gherkin-terminal-reporter tests
 """
 
 coverage = """
-	pytest -vv -s --cov=nd2k --cov=tests --cov-branch --cov-report=xml tests
+pytest -vv -s --cov=nd2k --cov=tests --cov-branch --cov-report=xml tests
 """
 
 coverage_html = """
-	pytest -vv -s --cov=nd2k --cov=tests --cov-branch --cov-report=html tests
+pytest -vv -s --cov=nd2k --cov=tests --cov-branch --cov-report=html tests
 """
 
 lint = """
-	pyflakes nd2k tests
+pyflakes nd2k tests
 """
 
 type_checker = """
-	mypy nd2k tests --strict
+mypy nd2k tests --strict
 """
 
 cyclomatic_complexity = """
-	radon cc nd2k tests --show-complexity --show-closures --total-average
+radon cc nd2k tests --show-complexity --show-closures --total-average
 """
 
 maintainability_index = """
-	radon mi nd2k tests --show
+radon mi nd2k tests --show
 """
 
 security_scan = """
-	bandit -c pyproject.toml -r .
+bandit -c pyproject.toml -r .
 """
