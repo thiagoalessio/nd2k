@@ -1,13 +1,17 @@
 import sys
 import os
 import csv
-from . import types, converter, utils, formatter
+from . import __version__, types, converter, utils, formatter
 
 
 def main() -> None:
 	if len(sys.argv) != 2:
 		print("Usage: nd2k <novadax-csv>")
 		exit(1)
+
+	if sys.argv[1] in ["-v", "--version"]:
+		print(__version__)
+		exit(0)
 
 	input_file = sys.argv[1]
 
