@@ -49,6 +49,8 @@ Feature: Convert NovaDAX CSV to Koinly-compatible transactions
 			| 28/09/2024 17:18:43 | Taxa de transação    | MEMERUNE | -4,00 MEMERUNE(≈R$0.67)     | Sucesso |
 			| 28/09/2024 17:18:43 | Compra(MEMERUNE/BRL) | BRL      | R$ -100,00                  | Sucesso |
 			| 28/09/2024 17:18:43 | Compra(MEMERUNE/BRL) | MEMERUNE | +362,77 MEMERUNE(≈R$155.05) | Sucesso |
+			| 28/09/2024 07:08:35 | Compra(TIP/BRL)      | TIP      | +200,787,00 TIP(≈R$51.02)   | Sucesso |
+			| 28/09/2024 07:08:35 | Compra(TIP/BRL)      | BRL      | R$ -51,01                   | Sucesso |
 			| 28/09/2024 17:19:53 | Venda(MEMERUNE/BRL)  | BRL      | R$ +89,48                   | Sucesso |
 			| 28/09/2024 17:19:54 | Taxa de transação    | BRL      | R$ -0,39                    | Sucesso |
 			| 28/09/2024 17:18:43 | Taxa de transação    | MEMERUNE | -1,559911 MEMERUNE(≈R$0.67) | Sucesso |
@@ -63,6 +65,10 @@ Feature: Convert NovaDAX CSV to Koinly-compatible transactions
 		Then the following error should appear:
 			"""
 			Error! The script went through all rows in the NovaDAX CSV and could not complete the following trades:
+
+			base asset:  2024-09-28 07:08:35 | Compra(TIP/BRL) | TIP | 200787.00 | Sucesso
+			quote asset: 2024-09-28 07:08:35 | Compra(TIP/BRL) | BRL | 51.01 | Sucesso
+			trading fee: <empty>
 
 			base asset:  <empty>
 			quote asset: 2024-09-28 17:18:43 | Compra(MEMERUNE/BRL) | BRL | 100.00 | Sucesso
