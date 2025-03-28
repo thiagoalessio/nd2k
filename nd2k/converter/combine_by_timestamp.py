@@ -16,8 +16,15 @@ def group_by_timestamp(lst: list[Transaction]) -> TransactionGroups:
 	"""
 	groups: TransactionGroups = defaultdict(list)
 	for t in lst:
-		groups[str(t.date) + t.summary].append(t)
+		groups[generate_group_index(t)].append(t)
 	return groups
+
+
+def generate_group_index(t: Transaction) -> str:
+	if isinstance(t, Trade):
+		return str(t.date) + t.summary
+	else:
+		return str(t.date) + t.summary + t.operation.symbol
 
 
 def combine_groups(groups: TransactionGroups) -> list[Transaction]:
