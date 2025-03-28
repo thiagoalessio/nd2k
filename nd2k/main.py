@@ -21,8 +21,7 @@ def main() -> None:
 
 	csv_rows     = read(input_file)
 	transactions = converter.organize_rows(csv_rows)
-	grouped      = converter.group_similar_by_timestamp(transactions)
-	combined     = converter.combine_groups(grouped)
+	combined     = converter.combine_by_timestamp(transactions)
 	ordered      = utils.order_by_date(combined)
 	formatted    = formatter.universal(ordered)
 
