@@ -95,5 +95,16 @@ class PartialTrade:
 	quote_asset:  Operation | None = None
 	trading_fee:  Operation | None = None
 
+	@property
+	def type(self) -> OperationType:
+		return self._any_asset.type
+
+	@property
+	def _any_asset(self) -> Operation:
+		any_asset = self.base_asset or self.quote_asset
+		if any_asset:
+			return any_asset
+		raise ValueError("Empty Trade")
+
 	def complete(self) -> Trade:
 		return Trade(**vars(self))

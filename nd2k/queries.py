@@ -51,17 +51,8 @@ def is_trading_fee(op: Operation) -> bool:
 
 
 def is_a_purchase(tr: Trade | PartialTrade) -> bool:
-	any_asset = get_any_asset(tr)
-	return any_asset.type.name == "BUY"
+	return tr.type.name == "BUY"
 
 
 def is_a_sale(tr: Trade | PartialTrade) -> bool:
-	any_asset = get_any_asset(tr)
-	return any_asset.type.name == "SELL"
-
-
-def get_any_asset(tr: Trade | PartialTrade) -> Operation:
-	any_asset = tr.base_asset or tr.quote_asset
-	if any_asset:
-		return any_asset
-	raise ValueError("Empty Trade")
+	return tr.type.name == "SELL"
