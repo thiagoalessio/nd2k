@@ -4,6 +4,7 @@ from decimal import Decimal
 from nd2k.converter.organize_rows import (
 	parse_date,
 	parse_amount,
+	parse_trading_pair,
 	create_operation,
 	create_partial_trade,
 )
@@ -44,6 +45,18 @@ def test_parse_amount_invalid() -> None:
 	with pytest.raises(ValueError) as e:
 		parse_amount(data)
 	assert str(e.value) == f"No numeric values found in \"{data}\""
+
+
+def test_parse_trading_pair() -> None:
+	data = "Compra(DOGE/BRL)"
+	assert parse_trading_pair(data) == TradingPair(base="DOGE", quote="BRL")
+
+
+def test_parse_trading_pair_invalid() -> None:
+	data = "AnythingElse"
+	with pytest.raises(ValueError) as e:
+		parse_trading_pair(data)
+	assert str(e.value) == f"No trading pair found in \"{data}\""
 
 
 def test_create_operation() -> None:

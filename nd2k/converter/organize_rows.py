@@ -4,14 +4,14 @@ from datetime import datetime
 from decimal import Decimal
 from ..types import (
 	CSV,
-	Transaction,
-	Trade,
 	NonTrade,
-	PartialTrade,
 	Operation,
 	OperationType,
+	PartialTrade,
+	Trade,
+	TradingPair,
+	Transaction,
 )
-from ..utils import parse_trading_pair
 from .. import queries as q
 
 
@@ -139,6 +139,13 @@ def parse_amount(data: str) -> Decimal:
 	# last comma acting as decimal separator
 	int_part = "".join(parts)
 	return Decimal(f"{int_part}.{last_part}")
+
+
+def parse_trading_pair(data: str) -> TradingPair:
+	match = re.search(r"\(([^\/]+)\/([^\)]+)", data)
+	if match:
+		return TradingPair(*match.groups())
+	raise ValueError(f"No trading pair found in \"{data}\"")
 
 
 def print_operation(op: Operation | None) -> str:
