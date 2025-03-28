@@ -27,11 +27,15 @@ Feature: Convert NovaDAX CSV to Koinly-compatible transactions
 			| 28/09/2024 07:08:35 | Compra(TIP/BRL)               | TIP      | +200,787,00 TIP(≈R$51.02)           | Sucesso |
 			| 24/10/2024 16:19:22 | Saque de criptomoedas         | DCR      | -1,54256146 DCR(≈R$106.55)          | Sucesso |
 			| 28/09/2024 07:08:35 | Compra(TIP/BRL)               | BRL      | R$ -51,01                           | Sucesso |
+			| 01/01/1970 00:00:00 | Saque de criptomoedas         | SHIB     | 1000                                | Sucesso |
+			| 01/01/1970 00:00:00 | Saque de criptomoedas         | DOGE     |  500                                | Sucesso |
 
 		When the file is processed
 
 		Then a Koinly universal file should be created with the following transactions:
 			| date                | sent_amount   | sent_cur | recv_amount    | recv_cur | fee_amount | fee_cur  | nwa | nwc | label    | description                   | txh |
+			| 1970-01-01 00:00:00 |  500          | DOGE     |                |          |            |          |     |     | withdraw | Saque de criptomoedas         |     |
+			| 1970-01-01 00:00:00 | 1000          | SHIB     |                |          |            |          |     |     | withdraw | Saque de criptomoedas         |     |
 			| 2024-09-23 20:01:41 |               |          |   40000.00     | BRL      |            |          |     |     | deposit  | Depósito em Reais             |     |
 			| 2024-09-23 20:13:47 |               |          |      10.00     | BRL      |            |          |     |     | reward   | Redeemed Bonus                |     |
 			| 2024-09-28 07:08:35 |   51.01       | BRL      |  200787.00     | TIP      | 863.3841   | TIP      |     |     | trade    | Compra(TIP/BRL)               |     |
