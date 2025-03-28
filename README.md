@@ -5,6 +5,7 @@ Converts NovaDAX CSV reports to formats accepted by Koinly.
 [![PyPI version][pypi_badge]][pypi_project_url]
 [![CI][ci_badge]][ci_project_url]
 [![Release][release_badge]][release_project_url]
+[![CodeQL][codeql_badge]][codeql_project_url]
 [![Codacy Badge][codacy_badge]][codacy_project_url]
 [![Codacy Coverage Badge][codacy_coverage_badge]][codacy_project_url]
 
@@ -61,6 +62,8 @@ based on the fee's currency and the trade type (purchase or sale).
 [ci_project_url]: https://github.com/thiagoalessio/nd2k/actions/workflows/ci.yml
 [release_badge]: https://github.com/thiagoalessio/nd2k/actions/workflows/release.yml/badge.svg
 [release_project_url]: https://github.com/thiagoalessio/nd2k/actions/workflows/release.yml
+[codeql_badge]: https://github.com/thiagoalessio/nd2k/actions/workflows/github-code-scanning/codeql/badge.svg
+[codeql_project_url]: https://github.com/thiagoalessio/nd2k/actions/workflows/github-code-scanning/codeql
 [codacy_badge]: https://app.codacy.com/project/badge/Grade/e26d4581b014425fba78028573b15f98
 [codacy_coverage_badge]: https://app.codacy.com/project/badge/Coverage/e26d4581b014425fba78028573b15f98
 [codacy_project_url]: https://app.codacy.com/gh/thiagoalessio/nd2k/dashboard
