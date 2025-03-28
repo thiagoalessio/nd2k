@@ -1,23 +1,34 @@
 from datetime import datetime
-from .queries import is_a_purchase
+from .queries import is_a_purchase, is_sending_funds
 from .types import Transaction, CSV, Trade, NonTrade, KoinlyTag
 
 
+universal_csv_headers = [
+	"Date",
+	"Sent Amount",
+	"Sent Currency",
+	"Received Amount",
+	"Received Currency",
+	"Fee Amount",
+	"Fee Currency",
+	"Net Worth Amount",
+	"Net Worth Currency",
+	"Label",
+	"Description",
+]
+
+
 def universal(transactions: list[Transaction]) -> CSV:
-	lines = []
-	lines.append([
-		"Date", "Sent Amount", "Sent Currency", "Received Amount",
-		"Received Currency", "Fee Amount", "Fee Currency", "Net Worth Amount",
-		"Net Worth Currency", "Label", "Description",
-	])
+	rows = []
+	rows.append(universal_csv_headers)
 
 	for t in transactions:
 		if isinstance(t, Trade):
-			lines.append(format_trade(t))
+			rows.append(format_trade(t))
 		else:
-			lines.append(format_non_trade(t))
+			rows.append(format_non_trade(t))
 
-	return lines
+	return rows
 
 
 def format_trade(t: Trade) -> list[str]:
@@ -51,16 +62,16 @@ def format_trade(t: Trade) -> list[str]:
 def format_non_trade(t: NonTrade) -> list[str]:
 	op = t.operation
 
-	if op.type.name in ["CRYPTO_WITHDRAW", "FIAT_WITHDRAW", "WITHDRAW_FEE"]:
+	if is_sending_funds(op):
 		sent_amount = str(op.amount)
-		sent_symbol = str(op.symbol)
+		sent_symbol = op.symbol
 		recv_amount = ""
 		recv_symbol = ""
 	else:
 		sent_amount = ""
 		sent_symbol = ""
 		recv_amount = str(op.amount)
-		recv_symbol = str(op.symbol)
+		recv_symbol = op.symbol
 
 	return [
 		format_date(op.date),          # Date
