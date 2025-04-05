@@ -3,7 +3,7 @@ from decimal import Decimal
 from typing import cast
 
 from .organize_rows import create_partial_trade
-from ..types import TransactionGroups, Transaction, Trade, NonTrade
+from ..types import TransactionGroups, Transaction, Trade, NonTrade, Swap
 
 
 def combine_by_timestamp(lst: list[Transaction]) -> list[Transaction]:
@@ -21,10 +21,14 @@ def group_by_timestamp(lst: list[Transaction]) -> TransactionGroups:
 
 
 def generate_group_index(t: Transaction) -> str:
+	if isinstance(t, NonTrade):
+		return str(t.date) + t.summary + t.operation.symbol
+
+	if isinstance(t, Swap):
+		return str(t.date) + t.summary + t.asset_a.symbol + t.asset_b.symbol
+
 	if isinstance(t, Trade):
 		return str(t.date) + t.summary
-	else:
-		return str(t.date) + t.summary + t.operation.symbol
 
 
 def combine_groups(groups: TransactionGroups) -> list[Transaction]:
@@ -37,8 +41,13 @@ def combine_groups(groups: TransactionGroups) -> list[Transaction]:
 	for grp in groups.values():
 		if all(isinstance(i, Trade) for i in grp):
 			combined.append(combine_trades(cast(list[Trade], grp)))
-		else:
-			combined.append(combine_non_trades(cast(list[NonTrade], grp)))
+			continue
+
+		if all(isinstance(i, Swap) for i in grp):
+			combined.append(combine_swaps(cast(list[Swap], grp)))
+			continue
+
+		combined.append(combine_non_trades(cast(list[NonTrade], grp)))
 
 	return combined
 
@@ -54,6 +63,15 @@ def combine_trades(lst: list[Trade]) -> Trade:
 	tr.trading_fee.amount = Decimal(sum(i.trading_fee.amount for i in lst))
 
 	return tr
+
+
+def combine_swaps(lst: list[Swap]) -> Swap:
+	a = lst[0].asset_a
+	b = lst[0].asset_b
+	a.amount = Decimal(sum(i.asset_a.amount for i in lst))
+	b.amount = Decimal(sum(i.asset_b.amount for i in lst))
+	return Swap(asset_a=a, asset_b=b)
+
 
 def combine_non_trades(lst: list[NonTrade]) -> NonTrade:
 	op = lst[0].operation

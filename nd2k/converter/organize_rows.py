@@ -7,7 +7,9 @@ from ..types import (
 	NonTrade,
 	Operation,
 	OperationType,
+	PartialSwap,
 	PartialTrade,
+	Swap,
 	Trade,
 	TradingPair,
 	Transaction,
@@ -23,17 +25,28 @@ def organize_rows(rows: CSV) -> list[Transaction]:
 	- Trades have 3 operations: base asset, quote asset and trading fee.
 	- Non-Trades, such as deposits and withdraws, have a single operation.
 	"""
+	swaps: list[Swap] = []
 	trades: list[Trade] = []
 	non_trades: list[NonTrade] = []
 	partial_trades: list[PartialTrade] = []
+	partial_swap = None
 
 	for row in rows:
 		op = create_operation(row)
 		if not q.is_successful(op):
 			continue
 
-		if not q.is_part_of_a_trade(op):
+		if q.is_a_non_trade(op):
 			non_trades.append(NonTrade(operation=op))
+			continue
+
+		if q.is_a_swap(op):
+			if partial_swap:
+				swaps.append(partial_swap.complete(op))
+				partial_swap = None
+				continue
+
+			partial_swap = PartialSwap(op)
 			continue
 
 		tr = create_or_update_trade(op, partial_trades)
@@ -45,7 +58,7 @@ def organize_rows(rows: CSV) -> list[Transaction]:
 	if len(partial_trades):
 		organize_rows_failed(partial_trades)
 
-	return trades + non_trades
+	return trades + swaps + non_trades
 
 
 def create_or_update_trade(op: Operation, lst: list[PartialTrade]) -> PartialTrade:

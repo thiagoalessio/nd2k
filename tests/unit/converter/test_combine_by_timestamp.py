@@ -3,16 +3,17 @@ from decimal import Decimal
 from typing import cast
 
 from nd2k.converter import combine_by_timestamp
-from nd2k.types import OperationType, Trade, TradingPair, NonTrade
+from nd2k.types import OperationType, Trade, TradingPair, NonTrade, Swap
 from ..helpers import fake_op, fake_partial_trade
 
 def test_combine_by_timestamp() -> None:
 	trades     = example_trades()
 	non_trades = example_non_trades()
-	combined   = combine_by_timestamp(trades + non_trades)
+	swaps      = example_swaps()
+	combined   = combine_by_timestamp(trades + non_trades + swaps)
 
-	# t0+t1 | t2 | t3+t4 | t5+t7 | t6 | o0+o1 | o2 | o3 | o4 | o5+o7 | o6
-	assert len(combined) == 11
+	# t0+t1 | t2 | t3+t4 | t5+t7 | t6 | o0+o1 | o2 | o3 | o4 | o5+o7 | o6 | s0 | s1+s2 | s3
+	assert len(combined) == 14
 
 	# t0+t1
 	assert cast(Trade, combined[0]).base_asset.amount  == Decimal("30") # 11+19
@@ -44,6 +45,15 @@ def test_combine_by_timestamp() -> None:
 	assert cast(NonTrade, combined[9]).operation.amount  == Decimal("32") # 13+19
 
 	assert combined[10] == non_trades[6] #o6
+
+	assert combined[11] == swaps[0] # s0
+
+	# s1+s2
+	assert cast(Swap, combined[12]).asset_a.amount == Decimal("266") # 127+139
+	assert cast(Swap, combined[12]).asset_b.amount == Decimal("280") # 131+149
+
+	assert combined[13] == swaps[3] # s3
+
 
 def example_trades() -> list[Trade]:
 	now = datetime.now()
@@ -106,6 +116,28 @@ def example_non_trades() -> list[NonTrade]:
 	o7 = fake_op(summary="deposit",  symbol="BBB", amount=Decimal("19"), date=now)
 
 	return [NonTrade(operation=o) for o in [o0, o1, o2, o3, o4, o5, o6, o7]]
+
+
+def example_swaps() -> list[Swap]:
+	now = datetime.now()
+
+	s0 = Swap(
+		asset_a=fake_op(summary="swap", symbol="AAA", amount=Decimal("109"), date=now),
+		asset_b=fake_op(summary="swap", symbol="BBB", amount=Decimal("113"), date=now)
+	)
+	s1 = Swap(
+		asset_a=fake_op(summary="swap", symbol="AAA", amount=Decimal("127"), date=now),
+		asset_b=fake_op(summary="swap", symbol="CCC", amount=Decimal("131"), date=now)
+	)
+	s2 = Swap(
+		asset_a=fake_op(summary="swap", symbol="AAA", amount=Decimal("139"), date=now),
+		asset_b=fake_op(summary="swap", symbol="CCC", amount=Decimal("149"), date=now)
+	)
+	s3 = Swap(
+		asset_a=fake_op(summary="swap", symbol="CCC", amount=Decimal("151"), date=now),
+		asset_b=fake_op(summary="swap", symbol="DDD", amount=Decimal("157"), date=now)
+	)
+	return [s0, s1, s2, s3]
 
 
 def trade(ot: str, s: str, b: str, q: str, d: datetime) -> Trade:

@@ -5,8 +5,19 @@ def is_successful(op: Operation) -> bool:
 	return op.status == "Sucesso"
 
 
-def is_part_of_a_trade(op: Operation) -> bool:
-	return op.type.name in ["BUY", "SELL", "TRADING_FEE"]
+def is_a_non_trade(op: Operation) -> bool:
+	return op.type.name in [
+		"CRYPTO_DEPOSIT",
+		"FIAT_DEPOSIT",
+		"CRYPTO_WITHDRAW",
+		"FIAT_WITHDRAW",
+		"WITHDRAW_FEE",
+		"REDEEMED_BONUS",
+	]
+
+
+def is_a_swap(op: Operation) -> bool:
+	return op.type.name == "SWAP"
 
 
 def is_completed(tr: PartialTrade) -> bool:

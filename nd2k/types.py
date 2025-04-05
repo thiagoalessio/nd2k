@@ -19,6 +19,7 @@ class OperationType(Enum):
 	BUY             = "Compra"
 	SELL            = "Venda"
 	TRADING_FEE     = "Taxa de transação"
+	SWAP            = "Troca"
 
 
 class KoinlyTag(Enum):
@@ -31,6 +32,7 @@ class KoinlyTag(Enum):
 	BUY             = "trade"
 	SELL            = "trade"
 	TRADING_FEE     = "fee"
+	SWAP            = "swap"
 
 
 @dataclass
@@ -83,7 +85,35 @@ class Trade:
 		return self.base_asset.type
 
 
-Transaction = Trade | NonTrade
+@dataclass
+class Swap:
+	asset_a: Operation
+	asset_b: Operation
+
+	@property
+	def date(self) -> datetime:
+		return self.asset_a.date
+
+	@property
+	def summary(self) -> str:
+		return "".join([
+			self.asset_a.summary,
+			self.asset_a.symbol,
+			"/",
+			self.asset_b.symbol
+		])
+
+
+class PartialSwap:
+	def __init__(self, asset_a: Operation):
+		self.asset_a = asset_a
+		self.asset_b = None
+
+	def complete(self, asset_b: Operation) -> Swap:
+		return Swap(asset_a=self.asset_a, asset_b=asset_b)
+
+
+Transaction = Trade | NonTrade | Swap
 TransactionGroups = defaultdict[str, list[Transaction]]
 
 
