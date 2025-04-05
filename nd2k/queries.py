@@ -1,4 +1,4 @@
-from .types import Operation, PartialTrade, Trade
+from .types import Operation, PartialTrade, Trade, PartialExchange
 
 
 def is_successful(op: Operation) -> bool:
@@ -20,7 +20,15 @@ def is_a_swap(op: Operation) -> bool:
 	return op.type.name == "SWAP"
 
 
-def is_completed(tr: PartialTrade) -> bool:
+def is_an_exchange(op: Operation) -> bool:
+	return op.type.name == "EXCHANGE"
+
+
+def is_exchange_fee(op: Operation) -> bool:
+	return op.type.name == "EXCHANGE_FEE"
+
+
+def is_completed(tr: PartialTrade | PartialExchange) -> bool:
 	return all([
 		tr.base_asset,
 		tr.quote_asset,

@@ -1,6 +1,6 @@
 from datetime import datetime
 from .queries import is_a_purchase, is_sending_funds
-from .types import Transaction, CSV, Trade, Swap, NonTrade, KoinlyTag
+from .types import Transaction, CSV, Trade, Swap, NonTrade, KoinlyTag, Exchange
 
 
 universal_csv_headers = [
@@ -25,6 +25,10 @@ def universal(transactions: list[Transaction]) -> CSV:
 	for t in transactions:
 		if isinstance(t, Trade):
 			rows.append(format_trade(t))
+			continue
+
+		if isinstance(t, Exchange):
+			rows.append(format_exchange(t))
 			continue
 
 		if isinstance(t, Swap):
@@ -60,6 +64,23 @@ def format_trade(t: Trade) -> list[str]:
 		"",                             # Net Worth Currency
 		KoinlyTag[t.type.name].value,   # Label
 		t.base_asset.summary,           # Description
+		"",                             # TxHash
+	]
+
+
+def format_exchange(e: Exchange) -> list[str]:
+	return [
+		format_date(e.base_asset.date), # Date
+		f"{e.base_asset.amount}",       # Sent Amount
+		f"{e.base_asset.symbol}",       # Sent Currency
+		f"{e.quote_asset.amount}",      # Received Amount
+		f"{e.quote_asset.symbol}",      # Received Currency
+		f"{e.trading_fee.amount}",      # Fee Amount
+		f"{e.trading_fee.symbol}",      # Fee Currency
+		"",                             # Net Worth Amount
+		"",                             # Net Worth Currency
+		KoinlyTag[e.base_asset.type.name].value, # Label
+		e.base_asset.summary,           # Description
 		"",                             # TxHash
 	]
 

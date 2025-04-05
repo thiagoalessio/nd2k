@@ -3,14 +3,15 @@ from decimal import Decimal
 from typing import cast
 
 from nd2k.converter import combine_by_timestamp
-from nd2k.types import OperationType, Trade, TradingPair, NonTrade, Swap
+from nd2k.types import OperationType, Trade, TradingPair, NonTrade, Swap, Exchange
 from ..helpers import fake_op, fake_partial_trade
 
 def test_combine_by_timestamp() -> None:
 	trades     = example_trades()
 	non_trades = example_non_trades()
 	swaps      = example_swaps()
-	combined   = combine_by_timestamp(trades + non_trades + swaps)
+	exchanges  = example_exchanges()
+	combined   = combine_by_timestamp(trades + non_trades + swaps + exchanges)
 
 	# t0+t1 | t2 | t3+t4 | t5+t7 | t6 | o0+o1 | o2 | o3 | o4 | o5+o7 | o6 | s0 | s1+s2 | s3
 	assert len(combined) == 14
@@ -138,6 +139,11 @@ def example_swaps() -> list[Swap]:
 		asset_b=fake_op(summary="swap", symbol="DDD", amount=Decimal("157"), date=now)
 	)
 	return [s0, s1, s2, s3]
+
+
+def example_exchanges() -> list[Exchange]:
+	# @TODO: add examples here
+	return []
 
 
 def trade(ot: str, s: str, b: str, q: str, d: datetime) -> Trade:

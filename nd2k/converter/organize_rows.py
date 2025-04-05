@@ -4,9 +4,11 @@ from datetime import datetime
 from decimal import Decimal
 from ..types import (
 	CSV,
+	Exchange,
 	NonTrade,
 	Operation,
 	OperationType,
+	PartialExchange,
 	PartialSwap,
 	PartialTrade,
 	Swap,
@@ -27,9 +29,11 @@ def organize_rows(rows: CSV) -> list[Transaction]:
 	"""
 	swaps: list[Swap] = []
 	trades: list[Trade] = []
+	exchanges: list[Exchange] = []
 	non_trades: list[NonTrade] = []
 	partial_trades: list[PartialTrade] = []
 	partial_swap = None
+	partial_exchange = None
 
 	for row in rows:
 		op = create_operation(row)
@@ -49,6 +53,22 @@ def organize_rows(rows: CSV) -> list[Transaction]:
 			partial_swap = PartialSwap(op)
 			continue
 
+		if q.is_an_exchange(op) or q.is_exchange_fee(op):
+			if partial_exchange:
+				if q.is_exchange_fee(op):
+					partial_exchange.trading_fee = op
+				else:
+					partial_exchange.quote_asset = op
+
+				if q.is_completed(partial_exchange):
+					exchanges.append(partial_exchange.complete())
+					partial_exchange = None
+					continue
+				continue
+
+			partial_exchange = PartialExchange(op)
+			continue
+
 		tr = create_or_update_trade(op, partial_trades)
 
 		if q.is_completed(tr):
@@ -58,7 +78,7 @@ def organize_rows(rows: CSV) -> list[Transaction]:
 	if len(partial_trades):
 		organize_rows_failed(partial_trades)
 
-	return trades + swaps + non_trades
+	return trades + swaps + exchanges + non_trades
 
 
 def create_or_update_trade(op: Operation, lst: list[PartialTrade]) -> PartialTrade:

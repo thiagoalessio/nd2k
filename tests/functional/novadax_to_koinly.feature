@@ -18,6 +18,12 @@ Feature: Convert NovaDAX CSV to Koinly-compatible transactions
 			| 07/07/2023 06:30:16 | Troca                         | VMPX     | -29,294,567743 VMPX(≈R$11274.01)    | Sucesso |
 			| 28/09/2024 17:18:43 | Compra(MEMERUNE/BRL)          | MEMERUNE | +362,77 MEMERUNE(≈R$155.05)         | Sucesso |
 			| 28/09/2024 17:19:53 | Venda(MEMERUNE/BRL)           | BRL      | R$ +89,48                           | Sucesso |
+			| 30/08/2023 03:47:09 | Taxa de Convert               | BRL      | R$ -0,01                            | Sucesso |
+			| 30/08/2023 03:47:09 | Convert                       | BRL      | R$ +0,12                            | Sucesso |
+			| 30/08/2023 03:47:09 | Convert                       | MATIC    | -0,04322 MATIC(≈R$0.12)             | Sucesso |
+			| 30/08/2023 03:47:09 | Taxa de Convert               | BRL      | R$ -0,01                            | Sucesso |
+			| 30/08/2023 03:47:09 | Convert                       | BRL      | R$ +0,22                            | Sucesso |
+			| 30/08/2023 03:47:09 | Convert                       | DOGE     | -0,705 DOGE(≈R$0.22)                | Sucesso |
 			| 27/10/2024 12:29:24 | Depósito de criptomoedas      | PUNKAI   | +1,609,546,768462 PUNKAI(≈R$160.95) | Sucesso |
 			| 28/09/2024 17:19:54 | Taxa de transação             | BRL      | R$ -0,39                            | Sucesso |
 			| 28/09/2024 17:19:53 | Taxa de transação             | BRL      | R$ -0,39                            | Falha   |
@@ -42,6 +48,8 @@ Feature: Convert NovaDAX CSV to Koinly-compatible transactions
 			| 1970-01-01 00:00:00 |  1000          | SHIB     |                |          |            |          |     |     | withdraw | Saque de criptomoedas         |     |
 			| 2023-07-07 06:30:16 | 29294.567743   | VMPX     |   29294.567743 | VMPXBRC  |            |          |     |     | swap     | Troca                         |     |
 			| 2023-07-07 06:30:16 | 29294.567743   | ABCD     |   29294.567743 | EFGH     |            |          |     |     | swap     | Troca                         |     |
+			| 2023-08-30 03:47:09 |     0.705      | DOGE     |       0.22     | BRL      | 0.01       | BRL      |     |     | exchange | Convert                       |     |
+			| 2023-08-30 03:47:09 |     0.04322    | MATIC    |       0.12     | BRL      | 0.01       | BRL      |     |     | exchange | Convert                       |     |
 			| 2024-09-23 20:01:41 |                |          |   40000.00     | BRL      |            |          |     |     | deposit  | Depósito em Reais             |     |
 			| 2024-09-23 20:13:47 |                |          |      10.00     | BRL      |            |          |     |     | reward   | Redeemed Bonus                |     |
 			| 2024-09-28 07:08:35 |    51.01       | BRL      |  200787.00     | TIP      | 863.3841   | TIP      |     |     | trade    | Compra(TIP/BRL)               |     |
