@@ -3,7 +3,7 @@ import sys
 import os
 import csv
 
-from . import __version__, types, converter, formatter
+from . import __version__, types, converter
 from .transaction import Transaction
 
 
@@ -26,7 +26,7 @@ def main() -> None:
 	transactions = converter.organize_rows(csv_rows)
 	combined     = converter.combine_by_timestamp(transactions)
 	ordered      = order_by_date(combined)
-	formatted    = formatter.universal(ordered)
+	formatted    = format(ordered)
 
 	output_file = re.sub(r"\.csv$", "", input_file) + "_koinly_universal.csv"
 	write(output_file, formatted)
@@ -43,6 +43,26 @@ def read(path: str) -> types.CSV:
 
 def order_by_date(lst: list[Transaction]) -> list[Transaction]:
 	return sorted(lst, key=lambda t: t.date)
+
+
+def format(transactions: list[Transaction]) -> types.CSV:
+	rows = []
+	rows.append([ # headers
+		"Date",
+		"Sent Amount",
+		"Sent Currency",
+		"Received Amount",
+		"Received Currency",
+		"Fee Amount",
+		"Fee Currency",
+		"Net Worth Amount",
+		"Net Worth Currency",
+		"Label",
+		"Description",
+	])
+	for t in transactions:
+		rows.append(t.format())
+	return rows
 
 
 def write(path: str, contents: types.CSV) -> None:
