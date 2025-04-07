@@ -68,7 +68,7 @@ def test_fits_as_base_asset() -> None:
 		trading_fee = fake_op(),
 	)
 	op = fake_op(summary="BUY(ABC/XYZ)", symbol="ABC")
-	assert q.fits_as_base_asset(op, tr)
+	assert tr.fits_as_base_asset(op)
 
 
 def test_fits_as_base_asset_already_has_base() -> None:
@@ -76,7 +76,7 @@ def test_fits_as_base_asset_already_has_base() -> None:
 		base_asset = fake_op(summary="BUY(ABC/XYZ)", symbol="XYZ"),
 	)
 	op = fake_op(summary="BUY(ABC/XYZ)", symbol="ABC")
-	assert not q.fits_as_base_asset(op, tr)
+	assert not tr.fits_as_base_asset(op)
 
 
 def test_fits_as_base_asset_wrong_summary() -> None:
@@ -85,7 +85,7 @@ def test_fits_as_base_asset_wrong_summary() -> None:
 		trading_fee = fake_op(),
 	)
 	op = fake_op(summary="SELL(ABC/XYZ)", symbol="ABC")
-	assert not q.fits_as_base_asset(op, tr)
+	assert not tr.fits_as_base_asset(op)
 
 
 def test_fits_as_base_asset_wrong_symbol() -> None:
@@ -94,7 +94,7 @@ def test_fits_as_base_asset_wrong_symbol() -> None:
 		trading_fee = fake_op(),
 	)
 	op = fake_op(summary="BUY(ABC/XYZ)", symbol="XYZ")
-	assert not q.fits_as_base_asset(op, tr)
+	assert not tr.fits_as_base_asset(op)
 
 
 def test_fits_as_quote_asset() -> None:
@@ -103,7 +103,7 @@ def test_fits_as_quote_asset() -> None:
 		trading_fee = fake_op(),
 	)
 	op = fake_op(summary="BUY(ABC/XYZ)", symbol="XYZ")
-	assert q.fits_as_quote_asset(op, tr)
+	assert tr.fits_as_quote_asset(op)
 
 
 def test_fits_as_quote_asset_already_has_quote() -> None:
@@ -111,7 +111,7 @@ def test_fits_as_quote_asset_already_has_quote() -> None:
 		quote_asset = fake_op(summary="BUY(ABC/XYZ)", symbol="XYZ"),
 	)
 	op = fake_op(summary="BUY(ABC/XYZ)", symbol="XYZ")
-	assert not q.fits_as_quote_asset(op, tr)
+	assert not tr.fits_as_quote_asset(op)
 
 
 def test_fits_as_quote_asset_wrong_summary() -> None:
@@ -120,7 +120,7 @@ def test_fits_as_quote_asset_wrong_summary() -> None:
 		trading_fee = fake_op(),
 	)
 	op = fake_op(summary="SELL(ABC/XYZ)", symbol="XYZ")
-	assert not q.fits_as_quote_asset(op, tr)
+	assert not tr.fits_as_quote_asset(op)
 
 
 def test_fits_as_quote_asset_wrong_symbol() -> None:
@@ -129,7 +129,7 @@ def test_fits_as_quote_asset_wrong_symbol() -> None:
 		trading_fee = fake_op(),
 	)
 	op = fake_op(summary="BUY(ABC/XYZ)", symbol="ABC")
-	assert not q.fits_as_quote_asset(op, tr)
+	assert not tr.fits_as_quote_asset(op)
 
 
 def test_fits_as_trading_fee_buy() -> None:
@@ -138,7 +138,7 @@ def test_fits_as_trading_fee_buy() -> None:
 		quote_asset = fake_op(symbol="XYZ", type=OperationType.BUY),
 	)
 	fee = fake_op(symbol="ABC", type=OperationType.TRADING_FEE)
-	assert q.fits_as_trading_fee(fee, tr)
+	assert tr.fits_as_trading_fee(fee)
 
 
 def test_fits_as_trading_fee_sell() -> None:
@@ -147,7 +147,7 @@ def test_fits_as_trading_fee_sell() -> None:
 		quote_asset = fake_op(symbol="XYZ", type=OperationType.SELL),
 	)
 	fee = fake_op(symbol="XYZ", type=OperationType.TRADING_FEE)
-	assert q.fits_as_trading_fee(fee, tr)
+	assert tr.fits_as_trading_fee(fee)
 
 
 def test_fits_as_trading_fee_already_has_fee() -> None:
@@ -157,13 +157,13 @@ def test_fits_as_trading_fee_already_has_fee() -> None:
 		trading_fee = fake_op(),
 	)
 	fee = fake_op(type=OperationType.TRADING_FEE)
-	assert not q.fits_as_trading_fee(fee, tr)
+	assert not tr.fits_as_trading_fee(fee)
 
 
 def test_fits_as_trading_fee_sell_wrong_type() -> None:
 	tr = fake_partial_trade()
 	op = fake_op(type=OperationType.WITHDRAW_FEE)
-	assert not q.fits_as_trading_fee(op, tr)
+	assert not tr.fits_as_trading_fee(op)
 
 
 def test_fits_as_trading_fee_buy_wrong_symbol() -> None:
@@ -172,7 +172,7 @@ def test_fits_as_trading_fee_buy_wrong_symbol() -> None:
 		quote_asset = fake_op(symbol="XYZ", type=OperationType.BUY),
 	)
 	fee = fake_op(symbol="XYZ", type=OperationType.TRADING_FEE)
-	assert not q.fits_as_trading_fee(fee, tr)
+	assert not tr.fits_as_trading_fee(fee)
 
 
 def test_fits_as_trading_fee_sell_wrong_symbol() -> None:
@@ -181,14 +181,14 @@ def test_fits_as_trading_fee_sell_wrong_symbol() -> None:
 		quote_asset = fake_op(symbol="XYZ", type=OperationType.SELL),
 	)
 	fee = fake_op(symbol="ABC", type=OperationType.TRADING_FEE)
-	assert not q.fits_as_trading_fee(fee, tr)
+	assert not tr.fits_as_trading_fee(fee)
 
 
 def test_fits_as_trading_fee_empty_trade() -> None:
 	tr = fake_partial_trade()
 	op = fake_op(type=OperationType.TRADING_FEE)
 	with pytest.raises(ValueError) as e:
-		q.fits_as_trading_fee(op, tr)
+		tr.fits_as_trading_fee(op)
 	assert str(e.value) == "Empty Trade"
 
 
@@ -198,5 +198,5 @@ def test_fits_as_trading_fee_malformed_trade() -> None:
 	)
 	op = fake_op(type=OperationType.TRADING_FEE)
 	with pytest.raises(ValueError) as e:
-		q.fits_as_trading_fee(op, tr)
+		tr.fits_as_trading_fee(op)
 	assert str(e.value) == "Malformed Trade"

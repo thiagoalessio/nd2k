@@ -1,10 +1,9 @@
-import re
 from typing import cast
 from ..types import CSV
 from ..transaction import Transaction
 from ..operation import Operation
 from ..nontrade import NonTrade
-from ..trade import Trade, PartialTrade, TradingPair
+from ..trade import Trade, PartialTrade
 from ..swap import Swap, PartialSwap
 from ..exchange import Exchange, PartialExchange
 from .. import queries as q
@@ -105,19 +104,19 @@ def create_or_update_trade(op: Operation, lst: list[PartialTrade]) -> PartialTra
 	If it doesn't find any match, create a new partial trade.
 	"""
 	for pt in lst:
-		if q.fits_as_base_asset(op, pt):
+		if pt.fits_as_base_asset(op):
 			pt.base_asset = op
 			return pt
 
-		if q.fits_as_quote_asset(op, pt):
+		if pt.fits_as_quote_asset(op):
 			pt.quote_asset = op
 			return pt
 
-		if q.fits_as_trading_fee(op, pt):
+		if pt.fits_as_trading_fee(op):
 			pt.trading_fee = op
 			return pt
 
-	pt = create_partial_trade(op)
+	pt = PartialTrade.from_operation(op)
 	lst.append(pt)
 	return pt
 
@@ -146,22 +145,6 @@ def organize_rows_failed(lst: list[PartialTrade]) -> None:
 	error_msg+= "and attach the file that caused this error.\n"
 	print(error_msg)
 	exit(1)
-
-
-def create_partial_trade(op: Operation) -> PartialTrade:
-	tr = PartialTrade(
-		summary      = op.summary,
-		trading_pair = parse_trading_pair(op.summary))
-	tr.base_asset  = op if q.fits_as_base_asset(op, tr)  else None
-	tr.quote_asset = op if q.fits_as_quote_asset(op, tr) else None
-	return tr
-
-
-def parse_trading_pair(data: str) -> TradingPair:
-	match = re.search(r"\(([^\/]+)\/([^\)]+)", data)
-	if match:
-		return TradingPair(*match.groups())
-	raise ValueError(f"No trading pair found in \"{data}\"")
 
 
 def print_operation(op: Operation | None) -> str:

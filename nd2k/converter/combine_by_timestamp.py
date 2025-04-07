@@ -1,12 +1,10 @@
 from collections import defaultdict
 from decimal import Decimal
 from typing import cast
-
-from .organize_rows import create_partial_trade
 from ..types import TransactionGroups
 from ..transaction import Transaction
 from ..nontrade import NonTrade
-from ..trade import Trade
+from ..trade import Trade, PartialTrade
 from ..swap import Swap
 from ..exchange import Exchange
 
@@ -53,7 +51,7 @@ def combine_groups(groups: TransactionGroups) -> list[Transaction]:
 
 
 def combine_trades(lst: list[Trade]) -> Trade:
-	pt = create_partial_trade(lst[0].base_asset)
+	pt = PartialTrade.from_operation(lst[0].base_asset)
 	pt.quote_asset = lst[0].quote_asset
 	pt.trading_fee = lst[0].trading_fee
 	tr = pt.complete()

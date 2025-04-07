@@ -1,10 +1,6 @@
 import pytest
 from datetime import datetime
 from decimal import Decimal
-from nd2k.converter.organize_rows import (
-	parse_trading_pair,
-	create_partial_trade,
-)
 from nd2k.trade import PartialTrade, TradingPair
 from nd2k.operation import OperationType, Operation
 from ..helpers import fake_op
@@ -46,15 +42,16 @@ def test_parse_amount_invalid() -> None:
 
 
 def test_parse_trading_pair() -> None:
-	data = "Compra(DOGE/BRL)"
-	assert parse_trading_pair(data) == TradingPair(base="DOGE", quote="BRL")
+	pair = TradingPair.from_string("Compra(DOGE/BRL)")
+	assert pair.base  == "DOGE"
+	assert pair.quote == "BRL"
 
 
 def test_parse_trading_pair_invalid() -> None:
-	data = "AnythingElse"
+	string = "AnythingElse"
 	with pytest.raises(ValueError) as e:
-		parse_trading_pair(data)
-	assert str(e.value) == f"No trading pair found in \"{data}\""
+		TradingPair.from_string(string)
+	assert str(e.value) == f"No trading pair found in \"{string}\""
 
 
 def test_create_operation() -> None:
@@ -83,7 +80,7 @@ def test_create_partial_trade_from_base_asset() -> None:
 		type    = OperationType.BUY,
 		symbol  = "ABC"
 	)
-	actual   = create_partial_trade(base)
+	actual   = PartialTrade.from_operation(base)
 	expected = PartialTrade(
 		summary      = "Compra(ABC/XYZ)",
 		trading_pair = TradingPair("ABC", "XYZ"),
@@ -98,7 +95,7 @@ def test_create_partial_trade_from_quote_asset() -> None:
 		type    = OperationType.BUY,
 		symbol  = "XYZ"
 	)
-	actual   = create_partial_trade(quote)
+	actual   = PartialTrade.from_operation(quote)
 	expected = PartialTrade(
 		summary      = "Compra(ABC/XYZ)",
 		trading_pair = TradingPair("ABC", "XYZ"),
