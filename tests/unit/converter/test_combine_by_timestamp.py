@@ -3,7 +3,7 @@ from decimal import Decimal
 from typing import cast
 
 from nd2k.converter import combine_by_timestamp
-from nd2k.types import Exchange
+from nd2k.exchange import Exchange
 from nd2k.operation import OperationType
 from nd2k.nontrade import NonTrade
 from nd2k.trade import Trade, TradingPair

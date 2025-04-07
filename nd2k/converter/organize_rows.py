@@ -4,14 +4,13 @@ from datetime import datetime
 from decimal import Decimal
 from ..types import (
 	CSV,
-	Exchange,
-	PartialExchange,
 	Transaction,
 )
 from ..operation import OperationType, Operation
 from ..nontrade import NonTrade
 from ..trade import Trade, PartialTrade, TradingPair
 from ..swap import Swap, PartialSwap
+from ..exchange import Exchange, PartialExchange
 from .. import queries as q
 
 

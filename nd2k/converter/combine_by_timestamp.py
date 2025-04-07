@@ -3,10 +3,11 @@ from decimal import Decimal
 from typing import cast
 
 from .organize_rows import create_partial_trade
-from ..types import TransactionGroups, Transaction, Exchange
+from ..types import TransactionGroups, Transaction
 from ..nontrade import NonTrade
 from ..trade import Trade
 from ..swap import Swap
+from ..exchange import Exchange
 
 
 def combine_by_timestamp(lst: list[Transaction]) -> list[Transaction]:

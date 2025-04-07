@@ -1,4 +1,4 @@
-from .types import PartialExchange
+from .exchange import PartialExchange
 from .operation import Operation
 from .trade import PartialTrade, Trade
 
