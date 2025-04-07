@@ -44,7 +44,7 @@ class Trade(Transaction):
 			recv_symbol = self.quote_asset.symbol
 
 		return [
-			format_date(self.base_asset.date), # Date
+			self.formatted_date,               # Date
 			f"{sent_amount}",                  # Sent Amount
 			f"{sent_symbol}",                  # Sent Currency
 			f"{recv_amount}",                  # Received Amount
@@ -87,10 +87,6 @@ class PartialTrade:
 
 	def complete(self) -> Trade:
 		return Trade(**vars(self))
-
-
-def format_date(data: datetime) -> str:
-	return data.strftime("%Y-%m-%d %H:%M:%S")
 
 
 def is_a_purchase(tr: Trade | PartialTrade) -> bool:

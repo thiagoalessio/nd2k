@@ -12,3 +12,7 @@ class Transaction(ABC):
 	@abstractmethod
 	def format(self) -> list[str]:
 		pass
+
+	@property
+	def formatted_date(self) -> str:
+		return self.date.strftime("%Y-%m-%d %H:%M:%S")

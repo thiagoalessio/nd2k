@@ -31,7 +31,7 @@ class NonTrade(Transaction): # a.k.a. "Simple Transaction"
 			recv_symbol = op.symbol
 
 		return [
-			format_date(op.date), # Date
+			self.formatted_date,  # Date
 			sent_amount,          # Sent Amount
 			sent_symbol,          # Sent Currency
 			recv_amount,          # Received Amount
@@ -54,10 +54,6 @@ class NonTrade(Transaction): # a.k.a. "Simple Transaction"
 			"WITHDRAW_FEE":    "fee",
 			"REDEEMED_BONUS":  "reward",
 		}[self.operation.type.name]
-
-
-def format_date(data: datetime) -> str:
-	return data.strftime("%Y-%m-%d %H:%M:%S")
 
 
 def is_sending_funds(op: Operation) -> bool:

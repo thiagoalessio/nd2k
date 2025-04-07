@@ -26,7 +26,7 @@ class Swap(Transaction):
 		a = self.asset_a
 		b = self.asset_b
 		return [
-			format_date(a.date), # Date
+			self.formatted_date, # Date
 			f"{a.amount}",       # Sent Amount
 			f"{a.symbol}",       # Sent Currency
 			f"{b.amount}",       # Received Amount
@@ -47,7 +47,3 @@ class PartialSwap:
 
 	def complete(self, asset_b: Operation) -> Swap:
 		return Swap(asset_a=self.asset_a, asset_b=asset_b)
-
-
-def format_date(data: datetime) -> str:
-	return data.strftime("%Y-%m-%d %H:%M:%S")

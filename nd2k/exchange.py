@@ -20,7 +20,7 @@ class Exchange(Transaction):
 
 	def format(self) -> list[str]:
 		return [
-			format_date(self.base_asset.date), # Date
+			self.formatted_date,               # Date
 			f"{self.base_asset.amount}",       # Sent Amount
 			f"{self.base_asset.symbol}",       # Sent Currency
 			f"{self.quote_asset.amount}",      # Received Amount
@@ -52,7 +52,3 @@ class PartialExchange:
 
 	def complete(self) -> Exchange:
 		return Exchange(**vars(self))
-
-
-def format_date(data: datetime) -> str:
-	return data.strftime("%Y-%m-%d %H:%M:%S")
