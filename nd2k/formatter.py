@@ -1,8 +1,9 @@
 from datetime import datetime
 from .queries import is_a_purchase, is_sending_funds
-from .types import Transaction, CSV, Swap, KoinlyTag, Exchange
+from .types import Transaction, CSV, KoinlyTag, Exchange
 from .nontrade import NonTrade
 from .trade import Trade
+from .swap import Swap
 
 
 universal_csv_headers = [

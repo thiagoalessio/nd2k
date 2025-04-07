@@ -6,13 +6,12 @@ from ..types import (
 	CSV,
 	Exchange,
 	PartialExchange,
-	PartialSwap,
-	Swap,
 	Transaction,
 )
 from ..operation import OperationType, Operation
 from ..nontrade import NonTrade
 from ..trade import Trade, PartialTrade, TradingPair
+from ..swap import Swap, PartialSwap
 from .. import queries as q
 
 
