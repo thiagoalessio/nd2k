@@ -19,7 +19,6 @@ class KoinlyTag(Enum):
 	BUY             = "trade"
 	SELL            = "trade"
 	TRADING_FEE     = "fee"
-	SWAP            = "swap"
 
 
 Transaction = Trade | NonTrade | Swap | Exchange
