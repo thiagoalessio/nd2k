@@ -30,6 +30,40 @@ class Trade:
 	def type(self) -> OperationType:
 		return self.base_asset.type
 
+	def format(self) -> list[str]:
+		if is_a_purchase(self):
+			sent_amount = self.quote_asset.amount
+			sent_symbol = self.quote_asset.symbol
+			recv_amount = self.base_asset.amount
+			recv_symbol = self.base_asset.symbol
+		else:
+			sent_amount = self.base_asset.amount
+			sent_symbol = self.base_asset.symbol
+			recv_amount = self.quote_asset.amount
+			recv_symbol = self.quote_asset.symbol
+
+		return [
+			format_date(self.base_asset.date), # Date
+			f"{sent_amount}",                  # Sent Amount
+			f"{sent_symbol}",                  # Sent Currency
+			f"{recv_amount}",                  # Received Amount
+			f"{recv_symbol}",                  # Received Currency
+			f"{self.trading_fee.amount}",      # Fee Amount
+			f"{self.trading_fee.symbol}",      # Fee Currency
+			"",                                # Net Worth Amount
+			"",                                # Net Worth Currency
+			self.koinly_tag(),                 # Label
+			self.base_asset.summary,           # Description
+			"",                                # TxHash
+		]
+
+	def koinly_tag(self) -> str:
+		return {
+			"BUY":         "trade",
+			"SELL":        "trade",
+			"TRADING_FEE": "fee",
+		}[self.type.name]
+
 
 @dataclass
 class PartialTrade:
@@ -52,3 +86,11 @@ class PartialTrade:
 
 	def complete(self) -> Trade:
 		return Trade(**vars(self))
+
+
+def format_date(data: datetime) -> str:
+	return data.strftime("%Y-%m-%d %H:%M:%S")
+
+
+def is_a_purchase(tr: Trade | PartialTrade) -> bool:
+	return tr.type.name == "BUY"
