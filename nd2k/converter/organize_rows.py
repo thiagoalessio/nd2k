@@ -5,7 +5,6 @@ from decimal import Decimal
 from ..types import (
 	CSV,
 	Exchange,
-	NonTrade,
 	PartialExchange,
 	PartialSwap,
 	PartialTrade,
@@ -15,6 +14,7 @@ from ..types import (
 	Transaction,
 )
 from ..operation import OperationType, Operation
+from ..nontrade import NonTrade
 from .. import queries as q
 
 

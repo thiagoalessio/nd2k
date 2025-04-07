@@ -4,6 +4,7 @@ from datetime import datetime
 from enum import Enum
 from typing import NamedTuple
 from .operation import OperationType, Operation
+from .nontrade import NonTrade
 
 
 CSV = list[list[str]]
@@ -22,19 +23,6 @@ class KoinlyTag(Enum):
 	SWAP            = "swap"
 	EXCHANGE        = "exchange"
 	EXCHANGE_FEE    = "fee"
-
-
-@dataclass
-class NonTrade: # a.k.a. "Simple Transaction"
-	operation: Operation
-
-	@property
-	def date(self) -> datetime:
-		return self.operation.date
-
-	@property
-	def summary(self) -> str:
-		return self.operation.summary
 
 
 class TradingPair(NamedTuple):
