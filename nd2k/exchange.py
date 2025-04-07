@@ -58,3 +58,22 @@ class PartialExchange:
 
 	def complete(self) -> Exchange:
 		return Exchange(**vars(self))
+
+
+def build_exchanges(ops: list[Operation]) -> list[Exchange]:
+	exchanges = []
+	partial   = None
+
+	for op in ops:
+		if not partial:
+			partial = PartialExchange(op)
+			continue
+		if op.is_exchange_fee():
+			partial.trading_fee = op
+		else:
+			partial.quote_asset = op
+		if partial.is_completed():
+			exchanges.append(partial.complete())
+			partial = None
+
+	return exchanges

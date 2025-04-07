@@ -3,8 +3,10 @@ import sys
 import os
 import csv
 
-from . import __version__, types, converter
+from typing import cast
+from . import __version__, types, converter, swap, trade, exchange, nontrade
 from .transaction import Transaction
+from .operation import Operation
 
 
 def main() -> None:
@@ -23,7 +25,7 @@ def main() -> None:
 		exit(1)
 
 	csv_rows     = read(input_file)
-	transactions = converter.organize_rows(csv_rows)
+	transactions = organize_rows(csv_rows)
 	combined     = converter.combine_by_timestamp(transactions)
 	ordered      = order_by_date(combined)
 	formatted    = format(ordered)
@@ -39,6 +41,35 @@ def read(path: str) -> types.CSV:
 	"""
 	with open(path, "r", encoding="utf-8", errors="ignore") as f:
 		return list(reversed(list(csv.reader(f))[1:]))
+
+
+def organize_rows(rows: types.CSV) -> list[Transaction]:
+	operations  = parse_successful_rows(rows)
+	categorized = categorize_by_type(operations)
+	swaps       = swap.build_swaps(categorized["swaps"])
+	trades      = trade.build_trades(categorized["trades"])
+	exchanges   = exchange.build_exchanges(categorized["exchanges"])
+	nontrades   = nontrade.build_nontrades(categorized["nontrades"])
+
+	return cast(list[Transaction], trades + swaps + exchanges + nontrades)
+
+
+def parse_successful_rows(rows: types.CSV) -> list[Operation]:
+	operations = []
+	for row in rows:
+		op = Operation.from_csv_row(row)
+		if op.is_successful():
+			operations.append(op)
+	return operations
+
+
+def categorize_by_type(ops: list[Operation]) -> dict[str, list[Operation]]:
+	return {
+		"swaps":     [op for op in ops if op.is_a_swap()],
+		"trades":    [op for op in ops if op.belongs_to_trade()],
+		"exchanges": [op for op in ops if op.belongs_to_an_exchange()],
+		"nontrades": [op for op in ops if op.is_a_non_trade()],
+	}
 
 
 def order_by_date(lst: list[Transaction]) -> list[Transaction]:

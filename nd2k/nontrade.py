@@ -51,3 +51,7 @@ class NonTrade(Transaction): # a.k.a. "Simple Transaction"
 			"WITHDRAW_FEE":    "fee",
 			"REDEEMED_BONUS":  "reward",
 		}[self.operation.type.name]
+
+
+def build_nontrades(ops: list[Operation]) -> list[NonTrade]:
+	return [NonTrade(operation=op) for op in ops]

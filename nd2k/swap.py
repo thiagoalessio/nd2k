@@ -49,3 +49,17 @@ class PartialSwap:
 
 	def complete(self, asset_b: Operation) -> Swap:
 		return Swap(asset_a=self.asset_a, asset_b=asset_b)
+
+
+def build_swaps(ops: list[Operation]) -> list[Swap]:
+	swaps   = []
+	partial = None
+
+	for op in ops:
+		if not partial:
+			partial = PartialSwap(op)
+			continue
+		swaps.append(partial.complete(op))
+		partial = None
+
+	return swaps
