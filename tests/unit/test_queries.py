@@ -11,17 +11,17 @@ def test_is_successful() -> None:
 
 
 def test_is_a_non_trade() -> None:
-	assert not q.is_a_non_trade(fake_op(type=OperationType.BUY))
-	assert not q.is_a_non_trade(fake_op(type=OperationType.SELL))
-	assert not q.is_a_non_trade(fake_op(type=OperationType.TRADING_FEE))
-	assert not q.is_a_non_trade(fake_op(type=OperationType.SWAP))
+	assert not fake_op(type=OperationType.BUY).is_a_non_trade()
+	assert not fake_op(type=OperationType.SELL).is_a_non_trade()
+	assert not fake_op(type=OperationType.TRADING_FEE).is_a_non_trade()
+	assert not fake_op(type=OperationType.SWAP).is_a_non_trade()
 
-	assert q.is_a_non_trade(fake_op(type=OperationType.CRYPTO_DEPOSIT))
-	assert q.is_a_non_trade(fake_op(type=OperationType.FIAT_DEPOSIT))
-	assert q.is_a_non_trade(fake_op(type=OperationType.CRYPTO_WITHDRAW))
-	assert q.is_a_non_trade(fake_op(type=OperationType.FIAT_WITHDRAW))
-	assert q.is_a_non_trade(fake_op(type=OperationType.WITHDRAW_FEE))
-	assert q.is_a_non_trade(fake_op(type=OperationType.REDEEMED_BONUS))
+	assert fake_op(type=OperationType.CRYPTO_DEPOSIT).is_a_non_trade()
+	assert fake_op(type=OperationType.FIAT_DEPOSIT).is_a_non_trade()
+	assert fake_op(type=OperationType.CRYPTO_WITHDRAW).is_a_non_trade()
+	assert fake_op(type=OperationType.FIAT_WITHDRAW).is_a_non_trade()
+	assert fake_op(type=OperationType.WITHDRAW_FEE).is_a_non_trade()
+	assert fake_op(type=OperationType.REDEEMED_BONUS).is_a_non_trade()
 
 
 def test_is_completed() -> None:

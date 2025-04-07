@@ -31,11 +31,11 @@ def organize_rows(rows: CSV) -> list[Transaction]:
 		if not op.is_successful():
 			continue
 
-		if q.is_a_non_trade(op):
+		if op.is_a_non_trade():
 			non_trades.append(NonTrade(operation=op))
 			continue
 
-		if q.is_a_swap(op):
+		if op.is_a_swap():
 			if partial_swap:
 				swaps.append(partial_swap.complete(op))
 				partial_swap = None
@@ -44,9 +44,9 @@ def organize_rows(rows: CSV) -> list[Transaction]:
 			partial_swap = PartialSwap(op)
 			continue
 
-		if q.belongs_to_an_exchange(op):
+		if op.belongs_to_an_exchange():
 			if partial_exchange:
-				if q.is_exchange_fee(op):
+				if op.is_exchange_fee():
 					partial_exchange.trading_fee = op
 				else:
 					partial_exchange.quote_asset = op
@@ -60,7 +60,7 @@ def organize_rows(rows: CSV) -> list[Transaction]:
 			partial_exchange = PartialExchange(op)
 			continue
 
-		if q.belongs_to_trade(op):
+		if op.belongs_to_trade():
 			tr = create_or_update_trade(op, partial_trades)
 
 			if q.is_completed(tr):

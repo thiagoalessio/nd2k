@@ -66,3 +66,36 @@ class Operation:
 
 	def is_successful(self) -> bool:
 		return self.status == "Sucesso"
+
+	def is_a_non_trade(self) -> bool:
+		return self.type.name in [
+			"CRYPTO_DEPOSIT",
+			"FIAT_DEPOSIT",
+			"CRYPTO_WITHDRAW",
+			"FIAT_WITHDRAW",
+			"WITHDRAW_FEE",
+			"REDEEMED_BONUS",
+		]
+
+
+	def is_a_swap(self) -> bool:
+		return self.type.name == "SWAP"
+
+
+	def is_an_exchange(self) -> bool:
+		return self.type.name == "EXCHANGE"
+
+
+	def is_exchange_fee(self) -> bool:
+		return self.type.name == "EXCHANGE_FEE"
+
+
+	def belongs_to_an_exchange(self) -> bool:
+		return self.is_an_exchange() or self.is_exchange_fee()
+
+
+	def belongs_to_trade(self) -> bool:
+		return self.type.name in ["BUY", "SELL"] or self.is_trading_fee()
+
+	def is_trading_fee(self) -> bool:
+		return self.type.name == "TRADING_FEE"

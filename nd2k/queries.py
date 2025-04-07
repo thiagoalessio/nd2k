@@ -3,37 +3,6 @@ from .operation import Operation
 from .trade import PartialTrade, Trade
 
 
-def is_a_non_trade(op: Operation) -> bool:
-	return op.type.name in [
-		"CRYPTO_DEPOSIT",
-		"FIAT_DEPOSIT",
-		"CRYPTO_WITHDRAW",
-		"FIAT_WITHDRAW",
-		"WITHDRAW_FEE",
-		"REDEEMED_BONUS",
-	]
-
-
-def is_a_swap(op: Operation) -> bool:
-	return op.type.name == "SWAP"
-
-
-def is_an_exchange(op: Operation) -> bool:
-	return op.type.name == "EXCHANGE"
-
-
-def is_exchange_fee(op: Operation) -> bool:
-	return op.type.name == "EXCHANGE_FEE"
-
-
-def belongs_to_an_exchange(op: Operation) -> bool:
-	return is_an_exchange(op) or is_exchange_fee(op)
-
-
-def belongs_to_trade(op: Operation) -> bool:
-	return op.type.name in ["BUY", "SELL"] or is_trading_fee(op)
-
-
 def is_completed(tr: PartialTrade | PartialExchange) -> bool:
 	return all([
 		tr.base_asset,
@@ -59,7 +28,7 @@ def fits_as_trading_fee(op: Operation, tr: PartialTrade) -> bool:
 	if tr.trading_fee:
 		return False
 
-	if not is_trading_fee(op):
+	if not op.is_trading_fee():
 		return False
 
 	if is_a_purchase(tr):
@@ -69,10 +38,6 @@ def fits_as_trading_fee(op: Operation, tr: PartialTrade) -> bool:
 		return op.symbol == tr.trading_pair.quote
 
 	raise ValueError("Malformed Trade")
-
-
-def is_trading_fee(op: Operation) -> bool:
-	return op.type.name == "TRADING_FEE"
 
 
 def is_a_purchase(tr: Trade | PartialTrade) -> bool:
