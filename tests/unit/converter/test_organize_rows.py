@@ -8,7 +8,7 @@ from nd2k.converter.organize_rows import (
 	create_operation,
 	create_partial_trade,
 )
-from nd2k.types import PartialTrade, TradingPair
+from nd2k.trade import PartialTrade, TradingPair
 from nd2k.operation import OperationType, Operation
 from ..helpers import fake_op
 

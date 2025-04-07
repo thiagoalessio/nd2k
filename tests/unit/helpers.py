@@ -1,7 +1,7 @@
 from typing import Any
 from datetime import datetime
 from decimal import Decimal
-from nd2k.types import PartialTrade, TradingPair
+from nd2k.trade import PartialTrade, TradingPair
 from nd2k.operation import OperationType, Operation
 
 

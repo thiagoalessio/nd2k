@@ -3,8 +3,9 @@ from decimal import Decimal
 from typing import cast
 
 from .organize_rows import create_partial_trade
-from ..types import TransactionGroups, Transaction, Trade, Swap, Exchange
+from ..types import TransactionGroups, Transaction, Swap, Exchange
 from ..nontrade import NonTrade
+from ..trade import Trade
 
 
 def combine_by_timestamp(lst: list[Transaction]) -> list[Transaction]:

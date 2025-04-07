@@ -7,14 +7,12 @@ from ..types import (
 	Exchange,
 	PartialExchange,
 	PartialSwap,
-	PartialTrade,
 	Swap,
-	Trade,
-	TradingPair,
 	Transaction,
 )
 from ..operation import OperationType, Operation
 from ..nontrade import NonTrade
+from ..trade import Trade, PartialTrade, TradingPair
 from .. import queries as q
 
 
