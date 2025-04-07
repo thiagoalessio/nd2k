@@ -14,6 +14,15 @@ class Swap(Transaction):
 		return self.asset_a.date
 
 	@property
+	def group_index(self) -> str:
+		return "".join([
+			str(self.date),
+			self.summary,
+			self.asset_a.symbol,
+			self.asset_b.symbol
+		])
+
+	@property
 	def summary(self) -> str:
 		return "".join([
 			self.asset_a.summary,

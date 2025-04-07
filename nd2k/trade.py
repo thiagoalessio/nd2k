@@ -28,6 +28,10 @@ class Trade(Transaction):
 		return self.base_asset.date
 
 	@property
+	def group_index(self) -> str:
+		return "".join([str(self.date), self.summary])
+
+	@property
 	def type(self) -> OperationType:
 		return self.base_asset.type
 

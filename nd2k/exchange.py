@@ -15,6 +15,14 @@ class Exchange(Transaction):
 		return self.base_asset.date
 
 	@property
+	def group_index(self) -> str:
+		return "".join([
+			str(self.date),
+			self.base_asset.symbol,
+			self.quote_asset.symbol
+		])
+
+	@property
 	def type(self) -> OperationType:
 		return self.base_asset.type
 

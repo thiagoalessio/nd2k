@@ -13,6 +13,14 @@ class NonTrade(Transaction): # a.k.a. "Simple Transaction"
 		return self.operation.date
 
 	@property
+	def group_index(self) -> str:
+		return "".join([
+			str(self.date),
+			self.summary,
+			self.operation.symbol
+		])
+
+	@property
 	def summary(self) -> str:
 		return self.operation.summary
 

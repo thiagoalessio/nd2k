@@ -21,24 +21,8 @@ def group_by_timestamp(lst: list[Transaction]) -> TransactionGroups:
 	"""
 	groups: TransactionGroups = defaultdict(list)
 	for t in lst:
-		groups[generate_group_index(t)].append(t)
+		groups[t.group_index].append(t)
 	return groups
-
-
-def generate_group_index(t: Transaction) -> str:
-	if isinstance(t, NonTrade):
-		return str(t.date) + t.summary + t.operation.symbol
-
-	if isinstance(t, Swap):
-		return str(t.date) + t.summary + t.asset_a.symbol + t.asset_b.symbol
-
-	if isinstance(t, Trade):
-		return str(t.date) + t.summary
-
-	if isinstance(t, Exchange):
-		return str(t.date) + t.base_asset.symbol + t.quote_asset.symbol
-
-	raise ValueError("Unknown Transaction Type")
 
 
 def combine_groups(groups: TransactionGroups) -> list[Transaction]:
