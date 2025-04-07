@@ -1,4 +1,5 @@
-from .types import Transaction, CSV
+from .transaction import Transaction
+from .types import CSV
 
 
 def universal(transactions: list[Transaction]) -> CSV:

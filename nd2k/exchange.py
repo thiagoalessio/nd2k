@@ -1,10 +1,11 @@
 from dataclasses import dataclass
 from datetime import datetime
+from .transaction import Transaction
 from .operation import Operation, OperationType
 
 
 @dataclass
-class Exchange:
+class Exchange(Transaction):
 	base_asset:  Operation
 	quote_asset: Operation
 	trading_fee: Operation

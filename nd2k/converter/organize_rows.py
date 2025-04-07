@@ -2,10 +2,9 @@ import unicodedata
 import re
 from datetime import datetime
 from decimal import Decimal
-from ..types import (
-	CSV,
-	Transaction,
-)
+from typing import cast
+from ..types import CSV
+from ..transaction import Transaction
 from ..operation import OperationType, Operation
 from ..nontrade import NonTrade
 from ..trade import Trade, PartialTrade, TradingPair
@@ -73,7 +72,7 @@ def organize_rows(rows: CSV) -> list[Transaction]:
 	if len(partial_trades):
 		organize_rows_failed(partial_trades)
 
-	return trades + swaps + exchanges + non_trades
+	return cast(list[Transaction], trades + swaps + exchanges + non_trades)
 
 
 def create_or_update_trade(op: Operation, lst: list[PartialTrade]) -> PartialTrade:

@@ -1,10 +1,11 @@
 from dataclasses import dataclass
 from datetime import datetime
+from .transaction import Transaction
 from .operation import Operation
 
 
 @dataclass
-class Swap:
+class Swap(Transaction):
 	asset_a: Operation
 	asset_b: Operation
 

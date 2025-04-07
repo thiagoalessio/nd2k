@@ -1,6 +1,7 @@
 from dataclasses import dataclass
 from datetime import datetime
 from typing import NamedTuple
+from .transaction import Transaction
 from .operation import Operation, OperationType
 
 
@@ -15,7 +16,7 @@ class TradingPair(NamedTuple):
 
 
 @dataclass
-class Trade:
+class Trade(Transaction):
 	summary:      str
 	trading_pair: TradingPair
 	base_asset:   Operation

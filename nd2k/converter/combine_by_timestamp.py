@@ -3,7 +3,8 @@ from decimal import Decimal
 from typing import cast
 
 from .organize_rows import create_partial_trade
-from ..types import TransactionGroups, Transaction
+from ..types import TransactionGroups
+from ..transaction import Transaction
 from ..nontrade import NonTrade
 from ..trade import Trade
 from ..swap import Swap
@@ -36,6 +37,8 @@ def generate_group_index(t: Transaction) -> str:
 
 	if isinstance(t, Exchange):
 		return str(t.date) + t.base_asset.symbol + t.quote_asset.symbol
+
+	raise ValueError("Unknown Transaction Type")
 
 
 def combine_groups(groups: TransactionGroups) -> list[Transaction]:

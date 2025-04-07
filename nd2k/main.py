@@ -4,7 +4,7 @@ import os
 import csv
 
 from . import __version__, types, converter, formatter
-from .types import Transaction
+from .transaction import Transaction
 
 
 def main() -> None:

@@ -1,10 +1,11 @@
 from dataclasses import dataclass
 from datetime import datetime
+from .transaction import Transaction
 from .operation import Operation
 
 
 @dataclass
-class NonTrade: # a.k.a. "Simple Transaction"
+class NonTrade(Transaction): # a.k.a. "Simple Transaction"
 	operation: Operation
 
 	@property
