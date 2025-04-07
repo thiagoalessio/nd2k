@@ -6,7 +6,6 @@ from ..nontrade import NonTrade
 from ..trade import Trade, PartialTrade
 from ..swap import Swap, PartialSwap
 from ..exchange import Exchange, PartialExchange
-from .. import queries as q
 
 
 def parse_successful_rows(rows: CSV) -> list[Operation]:
@@ -57,7 +56,7 @@ def build_exchanges(ops: list[Operation]) -> list[Exchange]:
 			partial.trading_fee = op
 		else:
 			partial.quote_asset = op
-		if q.is_completed(partial):
+		if partial.is_completed():
 			exchanges.append(partial.complete())
 			partial = None
 
@@ -70,7 +69,7 @@ def build_trades(ops: list[Operation]) -> list[Trade]:
 
 	for op in ops:
 		tr = create_or_update_trade(op, partials)
-		if q.is_completed(tr):
+		if tr.is_completed():
 			trades.append(tr.complete())
 			partials.remove(tr)
 

@@ -126,5 +126,9 @@ class PartialTrade(TradeTraits):
 		return tr
 
 
+	def is_completed(self) -> bool:
+		return all([self.base_asset, self.quote_asset, self.trading_fee])
+
+
 	def complete(self) -> Trade:
 		return Trade(**vars(self))

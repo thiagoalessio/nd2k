@@ -1,6 +1,5 @@
 import pytest
 
-from nd2k import queries as q
 from nd2k.operation import OperationType
 from .helpers import fake_op, fake_partial_trade
 
@@ -25,41 +24,41 @@ def test_is_a_non_trade() -> None:
 
 
 def test_is_completed() -> None:
-	assert q.is_completed(fake_partial_trade(
+	assert fake_partial_trade(
 		base_asset  = fake_op(),
 		quote_asset = fake_op(),
 		trading_fee = fake_op(),
-	))
-	assert not q.is_completed(fake_partial_trade(
+	).is_completed()
+	assert not fake_partial_trade(
 		base_asset  = fake_op(),
 		quote_asset = fake_op(),
 		trading_fee = None,
-	))
-	assert not q.is_completed(fake_partial_trade(
+	).is_completed()
+	assert not fake_partial_trade(
 		base_asset  = fake_op(),
 		quote_asset = None,
 		trading_fee = fake_op(),
-	))
-	assert not q.is_completed(fake_partial_trade(
+	).is_completed()
+	assert not fake_partial_trade(
 		base_asset  = None,
 		quote_asset = fake_op(),
 		trading_fee = fake_op(),
-	))
-	assert not q.is_completed(fake_partial_trade(
+	).is_completed()
+	assert not fake_partial_trade(
 		base_asset  = fake_op(),
 		quote_asset = None,
 		trading_fee = None,
-	))
-	assert not q.is_completed(fake_partial_trade(
+	).is_completed()
+	assert not fake_partial_trade(
 		base_asset  = None,
 		quote_asset = fake_op(),
 		trading_fee = None,
-	))
-	assert not q.is_completed(fake_partial_trade(
+	).is_completed()
+	assert not fake_partial_trade(
 		base_asset  = None,
 		quote_asset = None,
 		trading_fee = fake_op(),
-	))
+	).is_completed()
 
 
 def test_fits_as_base_asset() -> None:
