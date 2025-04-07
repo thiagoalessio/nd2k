@@ -60,11 +60,12 @@ def organize_rows(rows: CSV) -> list[Transaction]:
 			partial_exchange = PartialExchange(op)
 			continue
 
-		tr = create_or_update_trade(op, partial_trades)
+		if q.belongs_to_trade(op):
+			tr = create_or_update_trade(op, partial_trades)
 
-		if q.is_completed(tr):
-			trades.append(tr.complete())
-			partial_trades.remove(tr)
+			if q.is_completed(tr):
+				trades.append(tr.complete())
+				partial_trades.remove(tr)
 
 	if len(partial_trades):
 		organize_rows_failed(partial_trades)
