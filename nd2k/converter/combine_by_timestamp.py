@@ -1,4 +1,3 @@
-from collections import defaultdict
 from decimal import Decimal
 from typing import cast
 from ..types import TransactionGroups
@@ -7,20 +6,6 @@ from ..nontrade import NonTrade
 from ..trade import Trade, PartialTrade
 from ..swap import Swap
 from ..exchange import Exchange
-
-
-def combine_by_timestamp(lst: list[Transaction]) -> list[Transaction]:
-	return combine_groups(group_by_timestamp(lst))
-
-
-def group_by_timestamp(lst: list[Transaction]) -> TransactionGroups:
-	"""
-	Group transactions that have the same timestamp+summary
-	"""
-	groups: TransactionGroups = defaultdict(list)
-	for t in lst:
-		groups[t.group_index].append(t)
-	return groups
 
 
 def combine_groups(groups: TransactionGroups) -> list[Transaction]:

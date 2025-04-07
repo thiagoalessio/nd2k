@@ -3,6 +3,7 @@ import sys
 import os
 import csv
 
+from collections import defaultdict
 from typing import cast
 from . import __version__, types, converter, swap, trade, exchange, nontrade
 from .transaction import Transaction
@@ -26,7 +27,8 @@ def main() -> None:
 
 	csv_rows     = read(input_file)
 	transactions = organize_rows(csv_rows)
-	combined     = converter.combine_by_timestamp(transactions)
+	grouped      = group_by_timestamp(transactions)
+	combined     = converter.combine_groups(grouped)
 	ordered      = order_by_date(combined)
 	formatted    = format(ordered)
 
@@ -70,6 +72,13 @@ def categorize_by_type(ops: list[Operation]) -> dict[str, list[Operation]]:
 		"exchanges": [op for op in ops if op.belongs_to_an_exchange()],
 		"nontrades": [op for op in ops if op.is_a_non_trade()],
 	}
+
+
+def group_by_timestamp(lst: list[Transaction]) -> types.TransactionGroups:
+	groups: types.TransactionGroups = defaultdict(list)
+	for t in lst:
+		groups[t.group_index].append(t)
+	return groups
 
 
 def order_by_date(lst: list[Transaction]) -> list[Transaction]:

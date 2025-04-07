@@ -1,3 +1,3 @@
-from .combine_by_timestamp import combine_by_timestamp
+from .combine_by_timestamp import combine_groups
 
-__all__ = ["combine_by_timestamp"]
+__all__ = ["combine_groups"]

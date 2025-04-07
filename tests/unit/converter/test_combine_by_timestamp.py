@@ -2,7 +2,8 @@ from datetime import datetime, timedelta
 from decimal import Decimal
 from typing import cast
 
-from nd2k.converter import combine_by_timestamp
+from nd2k.main import group_by_timestamp
+from nd2k.converter import combine_groups
 from nd2k.transaction import Transaction
 from nd2k.exchange import Exchange
 from nd2k.operation import OperationType
@@ -16,9 +17,9 @@ def test_combine_by_timestamp() -> None:
 	non_trades = example_non_trades()
 	swaps      = example_swaps()
 	exchanges  = example_exchanges()
-	combined   = combine_by_timestamp(
+	combined   = combine_groups(group_by_timestamp(
 		cast(list[Transaction], trades + non_trades + swaps + exchanges)
-	)
+	))
 
 	# t0+t1 | t2 | t3+t4 | t5+t7 | t6 | o0+o1 | o2 | o3 | o4 | o5+o7 | o6 | s0 | s1+s2 | s3
 	assert len(combined) == 14
