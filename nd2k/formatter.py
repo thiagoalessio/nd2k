@@ -1,7 +1,6 @@
 from datetime import datetime
-from .queries import is_a_purchase, is_sending_funds
+from .queries import is_a_purchase
 from .types import Transaction, CSV, KoinlyTag
-from .nontrade import NonTrade
 from .trade import Trade
 from .swap import Swap
 from .exchange import Exchange
@@ -39,7 +38,7 @@ def universal(transactions: list[Transaction]) -> CSV:
 			rows.append(t.format())
 			continue
 
-		rows.append(format_non_trade(t))
+		rows.append(t.format())
 
 	return rows
 
@@ -69,36 +68,6 @@ def format_trade(t: Trade) -> list[str]:
 		KoinlyTag[t.type.name].value,   # Label
 		t.base_asset.summary,           # Description
 		"",                             # TxHash
-	]
-
-
-def format_non_trade(t: NonTrade) -> list[str]:
-	op = t.operation
-
-	if is_sending_funds(op):
-		sent_amount = str(op.amount)
-		sent_symbol = op.symbol
-		recv_amount = ""
-		recv_symbol = ""
-	else:
-		sent_amount = ""
-		sent_symbol = ""
-		recv_amount = str(op.amount)
-		recv_symbol = op.symbol
-
-	return [
-		format_date(op.date),          # Date
-		sent_amount,                   # Sent Amount
-		sent_symbol,                   # Sent Currency
-		recv_amount,                   # Received Amount
-		recv_symbol,                   # Received Currency
-		"",                            # Fee Amount
-		"",                            # Fee Currency
-		"",                            # Net Worth Amount
-		"",                            # Net Worth Currency
-		KoinlyTag[op.type.name].value, # Label
-		op.summary,                    # Description
-		"",                            # TxHash
 	]
 
 

@@ -77,7 +77,3 @@ def is_a_purchase(tr: Trade | PartialTrade) -> bool:
 
 def is_a_sale(tr: Trade | PartialTrade) -> bool:
 	return tr.type.name == "SELL"
-
-
-def is_sending_funds(op: Operation) -> bool:
-	return "WITHDRAW" in op.type.name
