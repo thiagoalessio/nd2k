@@ -1,7 +1,7 @@
 from dataclasses import dataclass
 from datetime import datetime
 from .transaction import Transaction
-from .operation import Operation, OperationType
+from .operation import Operation
 
 
 @dataclass
@@ -10,9 +10,11 @@ class Exchange(Transaction):
 	quote_asset: Operation
 	trading_fee: Operation
 
+
 	@property
 	def date(self) -> datetime:
 		return self.base_asset.date
+
 
 	@property
 	def group_index(self) -> str:
@@ -22,31 +24,22 @@ class Exchange(Transaction):
 			self.quote_asset.symbol
 		])
 
-	@property
-	def type(self) -> OperationType:
-		return self.base_asset.type
 
 	def format(self) -> list[str]:
 		return [
-			self.formatted_date,               # Date
-			f"{self.base_asset.amount}",       # Sent Amount
-			f"{self.base_asset.symbol}",       # Sent Currency
-			f"{self.quote_asset.amount}",      # Received Amount
-			f"{self.quote_asset.symbol}",      # Received Currency
-			f"{self.trading_fee.amount}",      # Fee Amount
-			f"{self.trading_fee.symbol}",      # Fee Currency
-			"",                                # Net Worth Amount
-			"",                                # Net Worth Currency
-			self.koinly_tag(),                 # Label
-			self.base_asset.summary,           # Description
-			"",                                # TxHash
+			self.formatted_date,          # Date
+			f"{self.base_asset.amount}",  # Sent Amount
+			f"{self.base_asset.symbol}",  # Sent Currency
+			f"{self.quote_asset.amount}", # Received Amount
+			f"{self.quote_asset.symbol}", # Received Currency
+			f"{self.trading_fee.amount}", # Fee Amount
+			f"{self.trading_fee.symbol}", # Fee Currency
+			"",                           # Net Worth Amount
+			"",                           # Net Worth Currency
+			"exchange",                   # Label
+			self.base_asset.summary,      # Description
+			"",                           # TxHash
 		]
-
-	def koinly_tag(self) -> str:
-		return {
-			"EXCHANGE": "exchange",
-			"EXCHANGE_FEE": "fee",
-		}[self.base_asset.type.name]
 
 
 class PartialExchange:
@@ -57,6 +50,7 @@ class PartialExchange:
 		self.base_asset  = base_asset
 		self.quote_asset = None
 		self.trading_fee = None
+
 
 	def complete(self) -> Exchange:
 		return Exchange(**vars(self))
