@@ -32,7 +32,7 @@ def universal(transactions: list[Transaction]) -> CSV:
 			continue
 
 		if isinstance(t, Exchange):
-			rows.append(format_exchange(t))
+			rows.append(t.format())
 			continue
 
 		if isinstance(t, Swap):
@@ -68,23 +68,6 @@ def format_trade(t: Trade) -> list[str]:
 		"",                             # Net Worth Currency
 		KoinlyTag[t.type.name].value,   # Label
 		t.base_asset.summary,           # Description
-		"",                             # TxHash
-	]
-
-
-def format_exchange(e: Exchange) -> list[str]:
-	return [
-		format_date(e.base_asset.date), # Date
-		f"{e.base_asset.amount}",       # Sent Amount
-		f"{e.base_asset.symbol}",       # Sent Currency
-		f"{e.quote_asset.amount}",      # Received Amount
-		f"{e.quote_asset.symbol}",      # Received Currency
-		f"{e.trading_fee.amount}",      # Fee Amount
-		f"{e.trading_fee.symbol}",      # Fee Currency
-		"",                             # Net Worth Amount
-		"",                             # Net Worth Currency
-		KoinlyTag[e.base_asset.type.name].value, # Label
-		e.base_asset.summary,           # Description
 		"",                             # TxHash
 	]
 

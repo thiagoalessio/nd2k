@@ -17,6 +17,28 @@ class Exchange:
 	def type(self) -> OperationType:
 		return self.base_asset.type
 
+	def format(self) -> list[str]:
+		return [
+			format_date(self.base_asset.date), # Date
+			f"{self.base_asset.amount}",       # Sent Amount
+			f"{self.base_asset.symbol}",       # Sent Currency
+			f"{self.quote_asset.amount}",      # Received Amount
+			f"{self.quote_asset.symbol}",      # Received Currency
+			f"{self.trading_fee.amount}",      # Fee Amount
+			f"{self.trading_fee.symbol}",      # Fee Currency
+			"",                                # Net Worth Amount
+			"",                                # Net Worth Currency
+			self.koinly_tag(),                 # Label
+			self.base_asset.summary,           # Description
+			"",                                # TxHash
+		]
+
+	def koinly_tag(self) -> str:
+		return {
+			"EXCHANGE": "exchange",
+			"EXCHANGE_FEE": "fee",
+		}[self.base_asset.type.name]
+
 
 class PartialExchange:
 	quote_asset: Operation | None
@@ -30,3 +52,6 @@ class PartialExchange:
 	def complete(self) -> Exchange:
 		return Exchange(**vars(self))
 
+
+def format_date(data: datetime) -> str:
+	return data.strftime("%Y-%m-%d %H:%M:%S")
