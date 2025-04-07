@@ -3,7 +3,8 @@ from decimal import Decimal
 from typing import cast
 
 from nd2k.converter import combine_by_timestamp
-from nd2k.types import OperationType, Trade, TradingPair, NonTrade, Swap, Exchange
+from nd2k.types import Trade, TradingPair, NonTrade, Swap, Exchange
+from nd2k.operation import OperationType
 from ..helpers import fake_op, fake_partial_trade
 
 def test_combine_by_timestamp() -> None:

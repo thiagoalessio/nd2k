@@ -1,7 +1,7 @@
 import pytest
 
 from nd2k import queries as q
-from nd2k.types import OperationType
+from nd2k.operation import OperationType
 from .helpers import fake_op, fake_partial_trade
 
 

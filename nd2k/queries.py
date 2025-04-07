@@ -1,4 +1,5 @@
-from .types import Operation, PartialTrade, Trade, PartialExchange
+from .types import PartialTrade, Trade, PartialExchange
+from .operation import Operation
 
 
 def is_successful(op: Operation) -> bool:

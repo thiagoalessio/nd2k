@@ -1,27 +1,12 @@
 from collections import defaultdict
 from dataclasses import dataclass
 from datetime import datetime
-from decimal import Decimal
 from enum import Enum
 from typing import NamedTuple
+from .operation import OperationType, Operation
 
 
 CSV = list[list[str]]
-
-
-class OperationType(Enum):
-	CRYPTO_DEPOSIT  = "Depósito de criptomoedas"
-	FIAT_DEPOSIT    = "Depósito em Reais"
-	CRYPTO_WITHDRAW = "Saque de criptomoedas"
-	FIAT_WITHDRAW   = "Saque em Reais"
-	WITHDRAW_FEE    = "Taxa de saque de criptomoedas"
-	REDEEMED_BONUS  = "Redeemed Bonus"
-	BUY             = "Compra"
-	SELL            = "Venda"
-	TRADING_FEE     = "Taxa de transação"
-	SWAP            = "Troca"
-	EXCHANGE        = "Convert"
-	EXCHANGE_FEE    = "Taxa de Convert"
 
 
 class KoinlyTag(Enum):
@@ -37,16 +22,6 @@ class KoinlyTag(Enum):
 	SWAP            = "swap"
 	EXCHANGE        = "exchange"
 	EXCHANGE_FEE    = "fee"
-
-
-@dataclass
-class Operation:
-	date:    datetime
-	type:    OperationType
-	summary: str
-	symbol:  str
-	amount:  Decimal
-	status:  str
 
 
 @dataclass
