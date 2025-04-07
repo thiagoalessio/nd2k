@@ -99,3 +99,6 @@ class Operation:
 
 	def is_trading_fee(self) -> bool:
 		return self.type.name == "TRADING_FEE"
+
+	def is_sending_funds(self) -> bool:
+		return "WITHDRAW" in self.type.name
