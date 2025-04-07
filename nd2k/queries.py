@@ -3,10 +3,6 @@ from .operation import Operation
 from .trade import PartialTrade, Trade
 
 
-def is_successful(op: Operation) -> bool:
-	return op.status == "Sucesso"
-
-
 def is_a_non_trade(op: Operation) -> bool:
 	return op.type.name in [
 		"CRYPTO_DEPOSIT",

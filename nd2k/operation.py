@@ -63,3 +63,6 @@ class Operation:
 		# last comma acting as decimal separator
 		int_part = "".join(parts)
 		return Decimal(f"{int_part}.{last_part}")
+
+	def is_successful(self) -> bool:
+		return self.status == "Sucesso"

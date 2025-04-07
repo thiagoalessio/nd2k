@@ -6,8 +6,8 @@ from .helpers import fake_op, fake_partial_trade
 
 
 def test_is_successful() -> None:
-	assert q.is_successful(fake_op(status="Sucesso"))
-	assert not q.is_successful(fake_op(status="Other"))
+	assert fake_op(status="Sucesso").is_successful()
+	assert not fake_op(status="Other").is_successful()
 
 
 def test_is_a_non_trade() -> None:

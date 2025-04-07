@@ -28,7 +28,7 @@ def organize_rows(rows: CSV) -> list[Transaction]:
 
 	for row in rows:
 		op = Operation.from_csv_row(row)
-		if not q.is_successful(op):
+		if not op.is_successful():
 			continue
 
 		if q.is_a_non_trade(op):
