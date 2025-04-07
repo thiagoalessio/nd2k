@@ -2,10 +2,7 @@ import pytest
 from datetime import datetime
 from decimal import Decimal
 from nd2k.converter.organize_rows import (
-	parse_date,
-	parse_amount,
 	parse_trading_pair,
-	create_operation,
 	create_partial_trade,
 )
 from nd2k.trade import PartialTrade, TradingPair
@@ -15,28 +12,28 @@ from ..helpers import fake_op
 
 def test_parse_date() -> None:
 	data     = "15/03/1970 23:45:56"
-	actual   = parse_date(data)
+	actual   = Operation.parse_date(data)
 	expected = datetime(1970, 3, 15, 23, 45, 56)
 	assert actual == expected
 
 
 def test_parse_amount_no_commas() -> None:
 	data     = "+12345678901234567890 SHIB(≈R$0)"
-	actual   = parse_amount(data)
+	actual   = Operation.parse_amount(data)
 	expected = Decimal(12345678901234567890)
 	assert actual == expected
 
 
 def test_parse_amount_one_comma() -> None:
 	data     = "R$ -355,77"
-	actual   = parse_amount(data)
+	actual   = Operation.parse_amount(data)
 	expected = Decimal("355.77")
 	assert actual == expected
 
 
 def test_parse_amount_multiple_commas() -> None:
 	data     = "-121,162,430,769,2304 BABYDOGE2(≈R$0.45)"
-	actual   = parse_amount(data)
+	actual   = Operation.parse_amount(data)
 	expected = Decimal("121162430769.2304")
 	assert actual == expected
 
@@ -44,7 +41,7 @@ def test_parse_amount_multiple_commas() -> None:
 def test_parse_amount_invalid() -> None:
 	data = "No digits present in string"
 	with pytest.raises(ValueError) as e:
-		parse_amount(data)
+		Operation.parse_amount(data)
 	assert str(e.value) == f"No numeric values found in \"{data}\""
 
 
@@ -61,14 +58,14 @@ def test_parse_trading_pair_invalid() -> None:
 
 
 def test_create_operation() -> None:
-	csv_line = [
+	row = [
 		"15/03/1970 23:45:56",
 		"Compra(ABC/BRL)",
 		"ABC",
 		"-1,234,567 ABC(≈R$87.38)",
 		"Sucesso",
 	]
-	actual   = create_operation(csv_line)
+	actual   = Operation.from_csv_row(row)
 	expected = Operation(
 		date    = datetime(1970, 3, 15, 23, 45, 56),
 		type    = OperationType.BUY,

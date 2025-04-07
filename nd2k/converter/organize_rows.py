@@ -1,11 +1,8 @@
-import unicodedata
 import re
-from datetime import datetime
-from decimal import Decimal
 from typing import cast
 from ..types import CSV
 from ..transaction import Transaction
-from ..operation import OperationType, Operation
+from ..operation import Operation
 from ..nontrade import NonTrade
 from ..trade import Trade, PartialTrade, TradingPair
 from ..swap import Swap, PartialSwap
@@ -30,7 +27,7 @@ def organize_rows(rows: CSV) -> list[Transaction]:
 	partial_exchange = None
 
 	for row in rows:
-		op = create_operation(row)
+		op = Operation.from_csv_row(row)
 		if not q.is_successful(op):
 			continue
 
@@ -124,18 +121,6 @@ def organize_rows_failed(lst: list[PartialTrade]) -> None:
 	exit(1)
 
 
-def create_operation(csv_line: list[str]) -> Operation:
-	summary = unicodedata.normalize('NFC', csv_line[1])
-	return Operation(
-		date    = parse_date(csv_line[0]),
-		type    = OperationType(summary.split("(")[0]),
-		summary = summary,
-		symbol  = csv_line[2],
-		amount  = parse_amount(csv_line[3]),
-		status  = csv_line[4],
-	)
-
-
 def create_partial_trade(op: Operation) -> PartialTrade:
 	tr = PartialTrade(
 		summary      = op.summary,
@@ -143,29 +128,6 @@ def create_partial_trade(op: Operation) -> PartialTrade:
 	tr.base_asset  = op if q.fits_as_base_asset(op, tr)  else None
 	tr.quote_asset = op if q.fits_as_quote_asset(op, tr) else None
 	return tr
-
-
-def parse_date(data: str) -> datetime:
-	return datetime.strptime(data, "%d/%m/%Y %H:%M:%S")
-
-
-def parse_amount(data: str) -> Decimal:
-	pattern = r"^\D*([,\d]+)"
-	matches = re.search(pattern, data)
-
-	if not matches:
-		raise ValueError(f"No numeric values found in \"{data}\"")
-
-	parts = matches.group(1).split(",")
-	last_part = parts.pop()
-
-	# number has no commas, no decimals
-	if not len(parts):
-		return Decimal(last_part)
-
-	# last comma acting as decimal separator
-	int_part = "".join(parts)
-	return Decimal(f"{int_part}.{last_part}")
 
 
 def parse_trading_pair(data: str) -> TradingPair:
