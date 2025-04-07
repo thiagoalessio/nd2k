@@ -30,6 +30,10 @@ def is_exchange_fee(op: Operation) -> bool:
 	return op.type.name == "EXCHANGE_FEE"
 
 
+def belongs_to_an_exchange(op: Operation) -> bool:
+	return is_an_exchange(op) or is_exchange_fee(op)
+
+
 def is_completed(tr: PartialTrade | PartialExchange) -> bool:
 	return all([
 		tr.base_asset,

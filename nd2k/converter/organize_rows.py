@@ -44,7 +44,7 @@ def organize_rows(rows: CSV) -> list[Transaction]:
 			partial_swap = PartialSwap(op)
 			continue
 
-		if q.is_an_exchange(op) or q.is_exchange_fee(op):
+		if q.belongs_to_an_exchange(op):
 			if partial_exchange:
 				if q.is_exchange_fee(op):
 					partial_exchange.trading_fee = op
