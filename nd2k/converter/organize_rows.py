@@ -10,6 +10,77 @@ from ..exchange import Exchange, PartialExchange
 from .. import queries as q
 
 
+def parse_successful_rows(rows: CSV) -> list[Operation]:
+	operations = []
+	for row in rows:
+		op = Operation.from_csv_row(row)
+		if op.is_successful():
+			operations.append(op)
+	return operations
+
+
+def categorize_by_type(ops: list[Operation]) -> dict[str, list[Operation]]:
+	return {
+		"swaps":     [op for op in ops if op.is_a_swap()],
+		"trades":    [op for op in ops if op.belongs_to_trade()],
+		"exchanges": [op for op in ops if op.belongs_to_an_exchange()],
+		"nontrades": [op for op in ops if op.is_a_non_trade()],
+	}
+
+
+def build_nontrades(ops: list[Operation]) -> list[NonTrade]:
+	return [NonTrade(operation=op) for op in ops]
+
+
+def build_swaps(ops: list[Operation]) -> list[Swap]:
+	swaps   = []
+	partial = None
+
+	for op in ops:
+		if not partial:
+			partial = PartialSwap(op)
+			continue
+		swaps.append(partial.complete(op))
+		partial = None
+
+	return swaps
+
+
+def build_exchanges(ops: list[Operation]) -> list[Exchange]:
+	exchanges = []
+	partial   = None
+
+	for op in ops:
+		if not partial:
+			partial = PartialExchange(op)
+			continue
+		if op.is_exchange_fee():
+			partial.trading_fee = op
+		else:
+			partial.quote_asset = op
+		if q.is_completed(partial):
+			exchanges.append(partial.complete())
+			partial = None
+
+	return exchanges
+
+
+def build_trades(ops: list[Operation]) -> list[Trade]:
+	trades = []
+	partials: list[PartialTrade] = []
+
+	for op in ops:
+		tr = create_or_update_trade(op, partials)
+		if q.is_completed(tr):
+			trades.append(tr.complete())
+			partials.remove(tr)
+
+	if len(partials):
+		organize_rows_failed(partials)
+
+	return trades
+
+
 def organize_rows(rows: CSV) -> list[Transaction]:
 	"""
 	Each row in the NovaDAX CSV is an Operation,
@@ -18,59 +89,14 @@ def organize_rows(rows: CSV) -> list[Transaction]:
 	- Trades have 3 operations: base asset, quote asset and trading fee.
 	- Non-Trades, such as deposits and withdraws, have a single operation.
 	"""
-	swaps: list[Swap] = []
-	trades: list[Trade] = []
-	exchanges: list[Exchange] = []
-	non_trades: list[NonTrade] = []
-	partial_trades: list[PartialTrade] = []
-	partial_swap = None
-	partial_exchange = None
+	operations  = parse_successful_rows(rows)
+	categorized = categorize_by_type(operations)
+	swaps       = build_swaps(categorized["swaps"])
+	trades      = build_trades(categorized["trades"])
+	exchanges   = build_exchanges(categorized["exchanges"])
+	nontrades   = build_nontrades(categorized["nontrades"])
 
-	for row in rows:
-		op = Operation.from_csv_row(row)
-		if not op.is_successful():
-			continue
-
-		if op.is_a_non_trade():
-			non_trades.append(NonTrade(operation=op))
-			continue
-
-		if op.is_a_swap():
-			if partial_swap:
-				swaps.append(partial_swap.complete(op))
-				partial_swap = None
-				continue
-
-			partial_swap = PartialSwap(op)
-			continue
-
-		if op.belongs_to_an_exchange():
-			if partial_exchange:
-				if op.is_exchange_fee():
-					partial_exchange.trading_fee = op
-				else:
-					partial_exchange.quote_asset = op
-
-				if q.is_completed(partial_exchange):
-					exchanges.append(partial_exchange.complete())
-					partial_exchange = None
-					continue
-				continue
-
-			partial_exchange = PartialExchange(op)
-			continue
-
-		if op.belongs_to_trade():
-			tr = create_or_update_trade(op, partial_trades)
-
-			if q.is_completed(tr):
-				trades.append(tr.complete())
-				partial_trades.remove(tr)
-
-	if len(partial_trades):
-		organize_rows_failed(partial_trades)
-
-	return cast(list[Transaction], trades + swaps + exchanges + non_trades)
+	return cast(list[Transaction], trades + swaps + exchanges + nontrades)
 
 
 def create_or_update_trade(op: Operation, lst: list[PartialTrade]) -> PartialTrade:
