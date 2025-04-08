@@ -3,6 +3,7 @@ import sys
 import os
 import csv
 
+from collections import defaultdict
 from typing import cast, Any
 from pprint import pformat
 
@@ -32,7 +33,7 @@ def main() -> None:
 	csv_rows     = read(input_file)
 	transactions = organize_rows(csv_rows)
 	ordered      = order_by_date(transactions)
-	formatted    = format(ordered)
+	formatted    = koinly_universal_format(ordered)
 
 	output_file = re.sub(r"\.csv$", "", input_file) + "_koinly_universal.csv"
 	write(output_file, formatted)
@@ -72,12 +73,18 @@ def parse_successful_rows(rows: CSV) -> list[Operation]:
 
 
 def categorize_by_type(ops: list[Operation]) -> dict[str, list[Operation]]:
-	return {
-		"swaps":     [op for op in ops if op.is_a_swap()],
-		"trades":    [op for op in ops if op.belongs_to_trade()],
-		"exchanges": [op for op in ops if op.belongs_to_an_exchange()],
-		"nontrades": [op for op in ops if op.is_a_non_trade()],
+	categorized = defaultdict(list)
+	conditions  = {
+		"swaps":     "is_a_swap",
+		"trades":    "belongs_to_trade",
+		"exchanges": "belongs_to_an_exchange",
+		"nontrades": "is_a_non_trade"
 	}
+	for op in ops:
+		for category, condition in conditions.items():
+			if getattr(op, condition)():
+				categorized[category].append(op)
+	return categorized
 
 
 def organize_rows_failed(leftovers: Any) -> None:
@@ -99,7 +106,7 @@ def order_by_date(lst: list[Transaction]) -> list[Transaction]:
 	return sorted(lst, key=lambda t: t.date)
 
 
-def format(transactions: list[Transaction]) -> CSV:
+def koinly_universal_format(transactions: list[Transaction]) -> CSV:
 	rows = []
 	rows.append([ # headers
 		"Date",
