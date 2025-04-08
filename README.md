@@ -37,12 +37,12 @@ Transactions can consist of one or more operations.
   only one operation;
 * `Swap` has 2 operations (asset_a and asset_b). Swaps have no fees;
 * `Exchange` and `Trade` have 3 operations: base asset, quote asset and fee;
-    * The only practical difference between them is that in the NavaDAX CSV,
-      trades mention the trading pair explicitly on the operation summary,
-      while exchanges come only with a generic summary ("Convert").
+  * The only practical difference between them is that in the NovaDAX CSV,
+    trades mention the trading pair explicitly on the operation summary,
+    while exchanges come only with a generic summary ("Convert").
 
 This script organizes NovaDAX CSV operations into transactions, and outputs
-a CSV in the [Koinly Universal Format][].
+them as a new CSV that follows the [Koinly Universal Format][].
 
 ### Base and Quote assets
 
