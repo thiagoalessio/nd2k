@@ -20,6 +20,7 @@ class OperationType(Enum):
 	EXCHANGE        = "Convert"
 	EXCHANGE_FEE    = "Taxa de Convert"
 
+
 @dataclass
 class Operation:
 	date:    datetime
@@ -28,6 +29,7 @@ class Operation:
 	symbol:  str
 	amount:  Decimal
 	status:  str
+
 
 	@classmethod
 	def from_csv_row(cls, row: list[str]) -> "Operation":
@@ -41,9 +43,11 @@ class Operation:
 			status  = row[4],
 		)
 
+
 	@staticmethod
 	def parse_date(data: str) -> datetime:
 		return datetime.strptime(data, "%d/%m/%Y %H:%M:%S")
+
 
 	@staticmethod
 	def parse_amount(data: str) -> Decimal:
@@ -64,8 +68,10 @@ class Operation:
 		int_part = "".join(parts)
 		return Decimal(f"{int_part}.{last_part}")
 
+
 	def is_successful(self) -> bool:
 		return self.status == "Sucesso"
+
 
 	def is_a_non_trade(self) -> bool:
 		return self.type.name in [
