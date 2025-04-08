@@ -17,6 +17,9 @@ Tracker = "https://github.com/thiagoalessio/nd2k/issues"
 [project.scripts]
 nd2k = "nd2k.main:main"
 
+[tool.coverage.report]
+exclude_lines = ["@abstractmethod"]
+
 [tool.mypy]
 strict = true
 
