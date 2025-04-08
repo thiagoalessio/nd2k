@@ -1,9 +1,10 @@
 import pytest
+
 from datetime import datetime
 from decimal import Decimal
-from nd2k.trade import PartialTrade, TradingPair
+
 from nd2k.operation import OperationType, Operation
-from ..helpers import fake_op
+from .helpers import fake_op
 
 
 def test_parse_date() -> None:
@@ -41,20 +42,7 @@ def test_parse_amount_invalid() -> None:
 	assert str(e.value) == f"No numeric values found in \"{data}\""
 
 
-def test_parse_trading_pair() -> None:
-	pair = TradingPair.from_string("Compra(DOGE/BRL)")
-	assert pair.base  == "DOGE"
-	assert pair.quote == "BRL"
-
-
-def test_parse_trading_pair_invalid() -> None:
-	string = "AnythingElse"
-	with pytest.raises(ValueError) as e:
-		TradingPair.from_string(string)
-	assert str(e.value) == f"No trading pair found in \"{string}\""
-
-
-def test_create_operation() -> None:
+def test_create_operation_from_csv_row() -> None:
 	row = [
 		"15/03/1970 23:45:56",
 		"Compra(ABC/BRL)",
@@ -74,31 +62,20 @@ def test_create_operation() -> None:
 	assert actual == expected
 
 
-def test_create_partial_trade_from_base_asset() -> None:
-	base = fake_op(
-		summary = "Compra(ABC/XYZ)",
-		type    = OperationType.BUY,
-		symbol  = "ABC"
-	)
-	actual   = PartialTrade.from_operation(base)
-	expected = PartialTrade(
-		summary      = "Compra(ABC/XYZ)",
-		trading_pair = TradingPair("ABC", "XYZ"),
-		base_asset   = base,
-	)
-	assert actual == expected
+def test_is_successful() -> None:
+	assert fake_op(status="Sucesso").is_successful()
+	assert not fake_op(status="Other").is_successful()
 
 
-def test_create_partial_trade_from_quote_asset() -> None:
-	quote = fake_op(
-		summary = "Compra(ABC/XYZ)",
-		type    = OperationType.BUY,
-		symbol  = "XYZ"
-	)
-	actual   = PartialTrade.from_operation(quote)
-	expected = PartialTrade(
-		summary      = "Compra(ABC/XYZ)",
-		trading_pair = TradingPair("ABC", "XYZ"),
-		quote_asset  = quote,
-	)
-	assert actual == expected
+def test_is_a_non_trade() -> None:
+	assert not fake_op(type=OperationType.BUY).is_a_non_trade()
+	assert not fake_op(type=OperationType.SELL).is_a_non_trade()
+	assert not fake_op(type=OperationType.TRADING_FEE).is_a_non_trade()
+	assert not fake_op(type=OperationType.SWAP).is_a_non_trade()
+
+	assert fake_op(type=OperationType.CRYPTO_DEPOSIT).is_a_non_trade()
+	assert fake_op(type=OperationType.FIAT_DEPOSIT).is_a_non_trade()
+	assert fake_op(type=OperationType.CRYPTO_WITHDRAW).is_a_non_trade()
+	assert fake_op(type=OperationType.FIAT_WITHDRAW).is_a_non_trade()
+	assert fake_op(type=OperationType.WITHDRAW_FEE).is_a_non_trade()
+	assert fake_op(type=OperationType.REDEEMED_BONUS).is_a_non_trade()
