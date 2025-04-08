@@ -147,8 +147,8 @@ def build(ops: list[Operation]) -> list[Trade]:
 			trades.append(tr.complete())
 			partials.remove(tr)
 
-	if len(partials):
-		organize_rows_failed(partials)
+	if partials:
+		raise ValueError("Incomplete Trades", partials)
 
 	groups = group_by_timestamp(cast(list[Transaction], trades)).values()
 	return [combine(cast(list[Trade], g)) for g in groups]
@@ -175,38 +175,6 @@ def create_or_update_trade(op: Operation, lst: list[PartialTrade]) -> PartialTra
 	pt = PartialTrade.from_operation(op)
 	lst.append(pt)
 	return pt
-
-
-def organize_rows_failed(lst: list[PartialTrade]) -> None:
-	"""
-	If by the end of "organize_rows" we still have partial trades,
-	something is wrong and the program shouldn't proceed.
-	"""
-	error_msg = "Error! The script went through all rows in the NovaDAX CSV "
-	error_msg+= "and could not complete the following trades:\n\n"
-
-	for pt in lst:
-		base  = print_operation(pt.base_asset)
-		quote = print_operation(pt.quote_asset)
-		fee   = print_operation(pt.trading_fee)
-
-		error_msg+= f"base asset:  {base}\n"
-		error_msg+= f"quote asset: {quote}\n"
-		error_msg+= f"trading fee: {fee}\n\n"
-
-	error_msg+= "The input file may be faulty, "
-	error_msg+= "or the script misinterpreted its contents.\n"
-	error_msg+= "If you are sure the input file is correct, please open an "
-	error_msg+= "issue at https://github.com/thiagoalessio/nd2k/issues/new "
-	error_msg+= "and attach the file that caused this error.\n"
-	print(error_msg)
-	exit(1)
-
-
-def print_operation(op: Operation | None) -> str:
-	if not op:
-		return "<empty>"
-	return " | ".join([str(v) for k,v in op.__dict__.items() if k != "type"])
 
 
 def combine(lst: list[Trade]) -> Trade:

@@ -3,7 +3,9 @@ import sys
 import os
 import csv
 
-from typing import cast
+from typing import cast, Any
+from pprint import pformat
+
 from . import __version__, swap, trade, exchange, nontrade
 from .transaction import Transaction
 from .operation import Operation
@@ -48,10 +50,14 @@ def read(path: str) -> CSV:
 def organize_rows(rows: CSV) -> list[Transaction]:
 	operations  = parse_successful_rows(rows)
 	categorized = categorize_by_type(operations)
-	swaps       = swap.build(categorized["swaps"])
-	trades      = trade.build(categorized["trades"])
-	exchanges   = exchange.build(categorized["exchanges"])
-	nontrades   = nontrade.build(categorized["nontrades"])
+
+	try:
+		swaps     = swap.build(categorized["swaps"])
+		trades    = trade.build(categorized["trades"])
+		exchanges = exchange.build(categorized["exchanges"])
+		nontrades = nontrade.build(categorized["nontrades"])
+	except ValueError as e:
+		organize_rows_failed(e.args)
 
 	return cast(list[Transaction], trades + swaps + exchanges + nontrades)
 
@@ -72,6 +78,21 @@ def categorize_by_type(ops: list[Operation]) -> dict[str, list[Operation]]:
 		"exchanges": [op for op in ops if op.belongs_to_an_exchange()],
 		"nontrades": [op for op in ops if op.is_a_non_trade()],
 	}
+
+
+def organize_rows_failed(leftovers: Any) -> None:
+	error_msg = "Error! The script went through all rows in the NovaDAX CSV "
+	error_msg+= "and could not find a match for the following operations:\n\n"
+
+	error_msg+= pformat(leftovers, indent=2, width=80)
+
+	error_msg+= "\n\nThe input file may be faulty, "
+	error_msg+= "or the script misinterpreted its contents.\n"
+	error_msg+= "If you are sure the input file is correct, please open an "
+	error_msg+= "issue at https://github.com/thiagoalessio/nd2k/issues/new "
+	error_msg+= "and attach the file that caused this error.\n"
+	print(error_msg)
+	exit(1)
 
 
 def order_by_date(lst: list[Transaction]) -> list[Transaction]:

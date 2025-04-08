@@ -71,6 +71,9 @@ def build(ops: list[Operation]) -> list[Swap]:
 		swaps.append(partial.complete(op))
 		partial = None
 
+	if partial:
+		raise ValueError("Incomplete Swap", partial)
+
 	groups = group_by_timestamp(cast(list[Transaction], swaps)).values()
 	return [combine(cast(list[Swap], g)) for g in groups]
 

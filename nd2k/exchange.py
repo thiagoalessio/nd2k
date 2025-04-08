@@ -83,6 +83,9 @@ def build(ops: list[Operation]) -> list[Exchange]:
 			exchanges.append(partial.complete())
 			partial = None
 
+	if partial:
+		raise ValueError("Incomplete Exchange", partial)
+
 	groups = group_by_timestamp(cast(list[Transaction], exchanges))
 	return [combine(cast(list[Exchange], g)) for g in groups.values()]
 

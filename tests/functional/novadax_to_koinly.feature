@@ -82,15 +82,39 @@ Feature: Convert NovaDAX CSV to Koinly-compatible transactions
 
 		Then the following error should appear:
 			"""
-			Error! The script went through all rows in the NovaDAX CSV and could not complete the following trades:
+			Error! The script went through all rows in the NovaDAX CSV and could not find a match for the following operations:
 
-			base asset:  2024-09-28 07:08:35 | Compra(TIP/BRL) | TIP | 200787.00 | Sucesso
-			quote asset: 2024-09-28 07:08:35 | Compra(TIP/BRL) | BRL | 51.01 | Sucesso
-			trading fee: <empty>
-
-			base asset:  <empty>
-			quote asset: 2024-09-28 17:18:43 | Compra(MEMERUNE/BRL) | BRL | 100.00 | Sucesso
-			trading fee: 2024-09-28 17:18:43 | Taxa de transação | MEMERUNE | 4.00 | Sucesso
+			( 'Incomplete Trades',
+			  [ PartialTrade(summary='Compra(TIP/BRL)',
+			                 trading_pair=TradingPair(base='TIP', quote='BRL'),
+			                 base_asset=Operation(date=datetime.datetime(2024, 9, 28, 7, 8, 35),
+			                                      type=<OperationType.BUY: 'Compra'>,
+			                                      summary='Compra(TIP/BRL)',
+			                                      symbol='TIP',
+			                                      amount=Decimal('200787.00'),
+			                                      status='Sucesso'),
+			                 quote_asset=Operation(date=datetime.datetime(2024, 9, 28, 7, 8, 35),
+			                                       type=<OperationType.BUY: 'Compra'>,
+			                                       summary='Compra(TIP/BRL)',
+			                                       symbol='BRL',
+			                                       amount=Decimal('51.01'),
+			                                       status='Sucesso'),
+			                 trading_fee=None),
+			    PartialTrade(summary='Compra(MEMERUNE/BRL)',
+			                 trading_pair=TradingPair(base='MEMERUNE', quote='BRL'),
+			                 base_asset=None,
+			                 quote_asset=Operation(date=datetime.datetime(2024, 9, 28, 17, 18, 43),
+			                                       type=<OperationType.BUY: 'Compra'>,
+			                                       summary='Compra(MEMERUNE/BRL)',
+			                                       symbol='BRL',
+			                                       amount=Decimal('100.00'),
+			                                       status='Sucesso'),
+			                 trading_fee=Operation(date=datetime.datetime(2024, 9, 28, 17, 18, 43),
+			                                       type=<OperationType.TRADING_FEE: 'Taxa de transação'>,
+			                                       summary='Taxa de transação',
+			                                       symbol='MEMERUNE',
+			                                       amount=Decimal('4.00'),
+			                                       status='Sucesso'))])
 
 			The input file may be faulty, or the script misinterpreted its contents.
 			If you are sure the input file is correct, please open an issue at https://github.com/thiagoalessio/nd2k/issues/new and attach the file that caused this error.
