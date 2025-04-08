@@ -1,7 +1,10 @@
 from dataclasses import dataclass
 from datetime import datetime
+from decimal import Decimal
+from typing import cast
 from .transaction import Transaction
 from .operation import Operation
+from .types import group_by_timestamp
 
 
 @dataclass
@@ -54,4 +57,12 @@ class NonTrade(Transaction): # a.k.a. "Simple Transaction"
 
 
 def build_nontrades(ops: list[Operation]) -> list[NonTrade]:
-	return [NonTrade(operation=op) for op in ops]
+	nontrades = [NonTrade(operation=op) for op in ops]
+	groups = group_by_timestamp(cast(list[Transaction], nontrades)).values()
+	return [combine(cast(list[NonTrade], g)) for g in groups]
+
+
+def combine(lst: list[NonTrade]) -> NonTrade:
+	op = lst[0].operation
+	op.amount = Decimal(sum(i.operation.amount for i in lst))
+	return NonTrade(operation=op)

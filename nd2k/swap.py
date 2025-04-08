@@ -1,7 +1,10 @@
 from dataclasses import dataclass
 from datetime import datetime
+from decimal import Decimal
+from typing import cast
 from .transaction import Transaction
 from .operation import Operation
+from .types import group_by_timestamp
 
 
 @dataclass
@@ -62,4 +65,13 @@ def build_swaps(ops: list[Operation]) -> list[Swap]:
 		swaps.append(partial.complete(op))
 		partial = None
 
-	return swaps
+	groups = group_by_timestamp(cast(list[Transaction], swaps)).values()
+	return [combine(cast(list[Swap], g)) for g in groups]
+
+
+def combine(lst: list[Swap]) -> Swap:
+	a = lst[0].asset_a
+	b = lst[0].asset_b
+	a.amount = Decimal(sum(i.asset_a.amount for i in lst))
+	b.amount = Decimal(sum(i.asset_b.amount for i in lst))
+	return Swap(asset_a=a, asset_b=b)

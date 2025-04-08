@@ -1,7 +1,10 @@
 from dataclasses import dataclass
 from datetime import datetime
+from decimal import Decimal
+from typing import cast
 from .transaction import Transaction
 from .operation import Operation
+from .types import group_by_timestamp
 
 
 @dataclass
@@ -76,4 +79,17 @@ def build_exchanges(ops: list[Operation]) -> list[Exchange]:
 			exchanges.append(partial.complete())
 			partial = None
 
-	return exchanges
+	groups = group_by_timestamp(cast(list[Transaction], exchanges)).values()
+	return [combine(cast(list[Exchange], g)) for g in groups]
+
+
+def combine(lst: list[Exchange]) -> Exchange:
+	base  = lst[0].base_asset
+	quote = lst[0].quote_asset
+	fee   = lst[0].trading_fee
+
+	base.amount  = Decimal(sum(i.base_asset.amount  for i in lst))
+	quote.amount = Decimal(sum(i.quote_asset.amount for i in lst))
+	fee.amount   = Decimal(sum(i.trading_fee.amount for i in lst))
+
+	return Exchange(base_asset=base, quote_asset=quote, trading_fee=fee)

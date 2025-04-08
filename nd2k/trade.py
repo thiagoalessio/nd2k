@@ -1,9 +1,11 @@
 import re
 from dataclasses import dataclass
 from datetime import datetime
-from typing import NamedTuple
+from decimal import Decimal
+from typing import NamedTuple, cast
 from .transaction import Transaction
 from .operation import Operation
+from .types import group_by_timestamp
 
 
 class TradingPair(NamedTuple):
@@ -147,7 +149,8 @@ def build_trades(ops: list[Operation]) -> list[Trade]:
 	if len(partials):
 		organize_rows_failed(partials)
 
-	return trades
+	groups = group_by_timestamp(cast(list[Transaction], trades)).values()
+	return [combine(cast(list[Trade], g)) for g in groups]
 
 
 def create_or_update_trade(op: Operation, lst: list[PartialTrade]) -> PartialTrade:
@@ -203,3 +206,16 @@ def print_operation(op: Operation | None) -> str:
 	if not op:
 		return "<empty>"
 	return " | ".join([str(v) for k,v in op.__dict__.items() if k != "type"])
+
+
+def combine(lst: list[Trade]) -> Trade:
+	pt = PartialTrade.from_operation(lst[0].base_asset)
+	pt.quote_asset = lst[0].quote_asset
+	pt.trading_fee = lst[0].trading_fee
+	tr = pt.complete()
+
+	tr.base_asset.amount  = Decimal(sum(i.base_asset.amount  for i in lst))
+	tr.quote_asset.amount = Decimal(sum(i.quote_asset.amount for i in lst))
+	tr.trading_fee.amount = Decimal(sum(i.trading_fee.amount for i in lst))
+
+	return tr
