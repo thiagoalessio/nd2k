@@ -2,9 +2,9 @@ from dataclasses import dataclass
 from datetime import datetime
 from decimal import Decimal
 from typing import cast
-from .transaction import Transaction
+
+from .transaction import Transaction, group_by_timestamp
 from .operation import Operation
-from .types import group_by_timestamp
 
 
 @dataclass
@@ -46,15 +46,20 @@ class Swap(Transaction):
 
 
 class PartialSwap:
+	asset_a: Operation
+	asset_b: Operation | None
+
+
 	def __init__(self, asset_a: Operation):
 		self.asset_a = asset_a
+		self.asset_b = None
 
 
 	def complete(self, asset_b: Operation) -> Swap:
 		return Swap(asset_a=self.asset_a, asset_b=asset_b)
 
 
-def build_swaps(ops: list[Operation]) -> list[Swap]:
+def build(ops: list[Operation]) -> list[Swap]:
 	swaps   = []
 	partial = None
 
@@ -62,6 +67,7 @@ def build_swaps(ops: list[Operation]) -> list[Swap]:
 		if not partial:
 			partial = PartialSwap(op)
 			continue
+
 		swaps.append(partial.complete(op))
 		partial = None
 

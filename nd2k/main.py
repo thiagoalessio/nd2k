@@ -4,9 +4,12 @@ import os
 import csv
 
 from typing import cast
-from . import __version__, types, swap, trade, exchange, nontrade
+from . import __version__, swap, trade, exchange, nontrade
 from .transaction import Transaction
 from .operation import Operation
+
+
+CSV = list[list[str]]
 
 
 def main() -> None:
@@ -33,7 +36,7 @@ def main() -> None:
 	write(output_file, formatted)
 
 
-def read(path: str) -> types.CSV:
+def read(path: str) -> CSV:
 	"""
 	The NovaDAX CSV file must be read in reverse order to
 	correctly match trades with their corresponding fees.
@@ -42,18 +45,18 @@ def read(path: str) -> types.CSV:
 		return list(reversed(list(csv.reader(f))[1:]))
 
 
-def organize_rows(rows: types.CSV) -> list[Transaction]:
+def organize_rows(rows: CSV) -> list[Transaction]:
 	operations  = parse_successful_rows(rows)
 	categorized = categorize_by_type(operations)
-	swaps       = swap.build_swaps(categorized["swaps"])
-	trades      = trade.build_trades(categorized["trades"])
-	exchanges   = exchange.build_exchanges(categorized["exchanges"])
-	nontrades   = nontrade.build_nontrades(categorized["nontrades"])
+	swaps       = swap.build(categorized["swaps"])
+	trades      = trade.build(categorized["trades"])
+	exchanges   = exchange.build(categorized["exchanges"])
+	nontrades   = nontrade.build(categorized["nontrades"])
 
 	return cast(list[Transaction], trades + swaps + exchanges + nontrades)
 
 
-def parse_successful_rows(rows: types.CSV) -> list[Operation]:
+def parse_successful_rows(rows: CSV) -> list[Operation]:
 	operations = []
 	for row in rows:
 		op = Operation.from_csv_row(row)
@@ -75,7 +78,7 @@ def order_by_date(lst: list[Transaction]) -> list[Transaction]:
 	return sorted(lst, key=lambda t: t.date)
 
 
-def format(transactions: list[Transaction]) -> types.CSV:
+def format(transactions: list[Transaction]) -> CSV:
 	rows = []
 	rows.append([ # headers
 		"Date",
@@ -95,7 +98,7 @@ def format(transactions: list[Transaction]) -> types.CSV:
 	return rows
 
 
-def write(path: str, contents: types.CSV) -> None:
+def write(path: str, contents: CSV) -> None:
 	with open(path, "w", encoding="utf-8", newline="\n") as f:
 		writer = csv.writer(f)
 		writer.writerows(contents)

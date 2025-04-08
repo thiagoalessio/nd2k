@@ -2,9 +2,9 @@ from dataclasses import dataclass
 from datetime import datetime
 from decimal import Decimal
 from typing import cast
-from .transaction import Transaction
+
+from .transaction import Transaction, group_by_timestamp
 from .operation import Operation
-from .types import group_by_timestamp
 
 
 @dataclass
@@ -31,7 +31,7 @@ class NonTrade(Transaction): # a.k.a. "Simple Transaction"
 		recv = None if sent else self.operation
 
 		return [
-			self.formatted_date, # Date
+			self.formatted_date,              # Date
 			f"{sent.amount if sent else ''}", # Sent Amount
 			f"{sent.symbol if sent else ''}", # Sent Currency
 			f"{recv.amount if recv else ''}", # Received Amount
@@ -45,6 +45,7 @@ class NonTrade(Transaction): # a.k.a. "Simple Transaction"
 			"",                               # TxHash
 		]
 
+
 	def koinly_tag(self) -> str:
 		return {
 			"CRYPTO_DEPOSIT":  "deposit",
@@ -56,10 +57,10 @@ class NonTrade(Transaction): # a.k.a. "Simple Transaction"
 		}[self.operation.type.name]
 
 
-def build_nontrades(ops: list[Operation]) -> list[NonTrade]:
+def build(ops: list[Operation]) -> list[NonTrade]:
 	nontrades = [NonTrade(operation=op) for op in ops]
-	groups = group_by_timestamp(cast(list[Transaction], nontrades)).values()
-	return [combine(cast(list[NonTrade], g)) for g in groups]
+	groups = group_by_timestamp(cast(list[Transaction], nontrades))
+	return [combine(cast(list[NonTrade], g)) for g in groups.values()]
 
 
 def combine(lst: list[NonTrade]) -> NonTrade:

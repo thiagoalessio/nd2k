@@ -3,9 +3,9 @@ from dataclasses import dataclass
 from datetime import datetime
 from decimal import Decimal
 from typing import NamedTuple, cast
-from .transaction import Transaction
+
+from .transaction import Transaction, group_by_timestamp
 from .operation import Operation
-from .types import group_by_timestamp
 
 
 class TradingPair(NamedTuple):
@@ -16,6 +16,7 @@ class TradingPair(NamedTuple):
 	"""
 	base:  str
 	quote: str
+
 
 	@classmethod
 	def from_string(cls, string: str) -> "TradingPair":
@@ -136,7 +137,7 @@ class PartialTrade(TradeTraits):
 		return Trade(**vars(self))
 
 
-def build_trades(ops: list[Operation]) -> list[Trade]:
+def build(ops: list[Operation]) -> list[Trade]:
 	trades = []
 	partials: list[PartialTrade] = []
 
