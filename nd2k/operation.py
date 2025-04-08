@@ -103,8 +103,10 @@ class Operation:
 	def belongs_to_trade(self) -> bool:
 		return self.type.name in ["BUY", "SELL"] or self.is_trading_fee()
 
+
 	def is_trading_fee(self) -> bool:
 		return self.type.name == "TRADING_FEE"
+
 
 	def is_sending_funds(self) -> bool:
 		return "WITHDRAW" in self.type.name

@@ -33,12 +33,13 @@ Transactions can consist of one or more operations.
 
 #### Types of Transaction
 
-* **NonTrade** (a.k.a. "Simple Transaction"), such as deposits and withdraws have only one operation;
-* **Swap** has 2 operations (asset_a and asset_b). Swaps have no fees;
-* **Exchange** and **Trade** have 3 operations: base asset, quote asset and fee;
-** The only practical difference between them is that in the NavaDAX CSV,
-trades mention the trading pair explicitly on the operation summary, while
-exchanges come only with a generic summary ("Convert").
+* `NonTrade` (a.k.a. "Simple Transaction"), such as deposits and withdraws has
+  only one operation;
+* `Swap` has 2 operations (asset_a and asset_b). Swaps have no fees;
+* `Exchange` and `Trade` have 3 operations: base asset, quote asset and fee;
+    * The only practical difference between them is that in the NavaDAX CSV,
+      trades mention the trading pair explicitly on the operation summary,
+      while exchanges come only with a generic summary ("Convert").
 
 This script organizes NovaDAX CSV operations into transactions, and outputs
 a CSV in the [Koinly Universal Format][].
@@ -60,6 +61,7 @@ based on the fee's currency and the trade type (purchase or sale).
 
 * For purchases, the fee is charged in the base asset currency.
 * For sales, the fee is charged in the quote asset currency.
+
 ---
 [pypi_badge]: https://badge.fury.io/py/nd2k.svg?icon=si%3Apython
 [pypi_project_url]: https://pypi.org/project/nd2k/
