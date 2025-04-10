@@ -3,7 +3,7 @@
 Converts NovaDAX CSV reports to formats accepted by Koinly.
 
 [![PyPI version][pypi_badge]][pypi_project_url]
-[![PyPI - Downloads][pypi_downloads_badge][pypi_project_url]
+[![PyPI - Downloads][pypi_downloads_badge]][pypi_project_url]
 [![CI][ci_badge]][ci_project_url]
 [![Release][release_badge]][release_project_url]
 [![CodeQL][codeql_badge]][codeql_project_url]
