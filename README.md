@@ -3,6 +3,7 @@
 Converts NovaDAX CSV reports to formats accepted by Koinly.
 
 [![PyPI version][pypi_badge]][pypi_project_url]
+[![PyPI - Downloads][pypi_downloads_badge][pypi_project_url]
 [![CI][ci_badge]][ci_project_url]
 [![Release][release_badge]][release_project_url]
 [![CodeQL][codeql_badge]][codeql_project_url]
@@ -65,6 +66,7 @@ based on the fee's currency and the trade type (purchase or sale).
 ---
 [pypi_badge]: https://badge.fury.io/py/nd2k.svg?icon=si%3Apython
 [pypi_project_url]: https://pypi.org/project/nd2k/
+[pypi_downloads_badge]: https://img.shields.io/pypi/dm/nd2k
 [ci_badge]: https://github.com/thiagoalessio/nd2k/actions/workflows/ci.yml/badge.svg?event=push&branch=main
 [ci_project_url]: https://github.com/thiagoalessio/nd2k/actions/workflows/ci.yml
 [release_badge]: https://github.com/thiagoalessio/nd2k/actions/workflows/release.yml/badge.svg
