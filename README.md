@@ -4,9 +4,11 @@ Converts NovaDAX CSV reports to formats accepted by Koinly.
 
 [![PyPI version][pypi_badge]][pypi_project_url]
 [![PyPI - Downloads][pypi_downloads_badge]][pypi_project_url]
+<br/>
 [![CI][ci_badge]][ci_project_url]
 [![Release][release_badge]][release_project_url]
 [![CodeQL][codeql_badge]][codeql_project_url]
+<br/>
 [![Codacy Badge][codacy_badge]][codacy_project_url]
 [![Codacy Coverage Badge][codacy_coverage_badge]][codacy_project_url]
 
