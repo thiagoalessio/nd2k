@@ -66,7 +66,7 @@ based on the fee's currency and the trade type (purchase or sale).
 ---
 [pypi_badge]: https://badge.fury.io/py/nd2k.svg?icon=si%3Apython
 [pypi_project_url]: https://pypi.org/project/nd2k/
-[pypi_downloads_badge]: https://img.shields.io/pypi/dm/nd2k
+[pypi_downloads_badge]: https://img.shields.io/pypi/dm/nd2k?logo=python&logoColor=white&link=https://pypi.org/project/nd2k/
 [ci_badge]: https://github.com/thiagoalessio/nd2k/actions/workflows/ci.yml/badge.svg?event=push&branch=main
 [ci_project_url]: https://github.com/thiagoalessio/nd2k/actions/workflows/ci.yml
 [release_badge]: https://github.com/thiagoalessio/nd2k/actions/workflows/release.yml/badge.svg
