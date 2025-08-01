@@ -1,7 +1,7 @@
 {
     "_meta": {
         "hash": {
-            "sha256": "ca05c3fcc17faabb2acd1c68dc1033a95e07bd58e2561d91960bc456495fe687"
+            "sha256": "c786524d1dfd73796fe994bbf46b1b04f3c1a514479307fa3969f63757829193"
         },
         "pipfile-spec": 6,
         "requires": {},
@@ -17,12 +17,12 @@
     "develop": {
         "bandit": {
             "hashes": [
-                "sha256:cb2e57524e99e33ced48833c6cc9c12ac78ae970bb6a450a83c4b506ecc1e2f9",
-                "sha256:db812e9c39b8868c0fed5278b77fffbbaba828b4891bc80e34b9c50373201cfd"
+                "sha256:3348e934d736fcdb68b6aa4030487097e23a501adf3e7827b63658df464dddd0",
+                "sha256:dbfe9c25fc6961c2078593de55fd19f2559f9e45b99f1272341f5b95dea4e56b"
             ],
             "index": "pypi",
             "markers": "python_version >= '3.9'",
-            "version": "==1.8.5"
+            "version": "==1.8.6"
         },
         "build": {
             "hashes": [
@@ -745,11 +745,11 @@
         },
         "rich": {
             "hashes": [
-                "sha256:1c9491e1951aac09caffd42f448ee3d04e58923ffe14993f6e83068dc395d7e0",
-                "sha256:82f1bc23a6a21ebca4ae0c45af9bdbc492ed20231dcb63f297d6d1021a9d5725"
+                "sha256:536f5f1785986d6dbdea3c75205c473f970777b4a0d6c6dd1b696aa05a3fa04f",
+                "sha256:e497a48b844b0320d45007cdebfeaeed8db2a4f4bcf49f15e455cfc4af11eaa8"
             ],
             "markers": "python_full_version >= '3.8.0'",
-            "version": "==14.0.0"
+            "version": "==14.1.0"
         },
         "setuptools": {
             "hashes": [
